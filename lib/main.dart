@@ -1,10 +1,8 @@
-import 'package:admin_banja/onboarding/onboarding.dart';
-import 'package:admin_banja/screens/dash.dart';
+import 'package:admin_banja/pager.dart';
 import 'package:admin_banja/services/local_db.dart';
 import 'package:admin_banja/services/server.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get_storage/get_storage.dart';
@@ -16,10 +14,6 @@ Future<void> main() async {
   await GetStorage.init();
   Server().fetchData();
 
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
-
   final _isBoardingSeenAlready =
       GetStorage().read('localDbInitialized') ?? false;
 
@@ -28,13 +22,13 @@ Future<void> main() async {
     GetStorage().write('localDbInitialized', true);
   }
 
-  runApp(Phoenix(
-    child: const OKToast(
+  runApp(
+    const OKToast(
       animationCurve: Curves.easeIn,
       animationDuration: Duration(milliseconds: 200),
       child: MyApp(),
     ),
-  ));
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -43,8 +37,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final isBoardingSeenAlready =
-        GetStorage().read('welcomeScreenSeen') ?? false;
+
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -57,7 +50,6 @@ class MyApp extends StatelessWidget {
           designSize: const Size(520, 890),
           builder: (context) {
             return GetMaterialApp(
-              //theme: ThemeData(useMaterial3: true),
               title: 'Tuula Credit',
               theme: ThemeData(
                 useMaterial3: true,
@@ -76,21 +68,7 @@ class MyApp extends StatelessWidget {
                   child: widget!,
                 );
               },
-              home: GetStorage().read('dashDat') == null
-                  ? Scaffold(
-                      body: Container(
-                          color: Colors.white,
-                          child: Center(
-                              child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              const CircularProgressIndicator(),
-                              SizedBox(height: 10.h),
-                              Text('Snycing data')
-                            ],
-                          ))),
-                    )
-                  : Dash(),
+              home: const Pager(),
             );
           }),
     );

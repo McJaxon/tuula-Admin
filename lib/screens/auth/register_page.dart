@@ -40,8 +40,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void initState() {
-
-
     authController.nationalIDFocus.addListener(() {
       if (authController.nationalIDFocus.hasFocus) {
         authController.trigger(true);
@@ -96,85 +94,74 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   buildForm() {
-    if (LoginTypes.newUser == loginType) {
-      return [
-        SizedBox(
-          height: 30.h,
-        ),
-        TextBox(
-          textInputType: TextInputType.text,
-          textCapitalization: TextCapitalization.characters,
-          validator: FieldValidator.validateNIN,
-          maxLength: 14,
-          focusNode: authController.nationalIDFocus,
-          textEditingController: authController.nationalID,
-          title: 'Enter NIN Number',
-          hint: 'eg CM546FDF54534FHS',
-        ),
-        SizedBox(
-          height: 22.h,
-        ),
-        TextBox(
-          textInputType: TextInputType.text,
-          maxLength: 6,
-          focusNode: authController.referralIDFocus,
-          textEditingController: authController.referralID,
-          title: 'Referral ID',
-          hint: 'enter referral ID - optional',
-        ),
-        SizedBox(
-          height: 22.h,
-        ),
-        TextBox(
-          textInputType: TextInputType.phone,
-          maxLength: 9,
-          validator: FieldValidator.validatePhone,
-          focusNode: authController.phoneNumberFocus,
-          textEditingController: authController.phoneNumber,
-          title: 'Phone Number',
-          hint: 'enter phone',
-        ),
-        SizedBox(
-          height: 300.h,
-        ),
-      ];
-    } else {
-      return [
-        SizedBox(
-          height: 30.h,
-        ),
-        Text(
-          'Log in to continue',
-          style: TextStyle(fontSize: 18.sp, fontFamily: 'Poppins '),
-        ),
-        SizedBox(
-          height: 30.h,
-        ),
-        TextBox(
-          textInputType: TextInputType.text,
-          validator: FieldValidator.validateEmail,
-          focusNode: authController.emailFocus,
-          textEditingController: authController.emailAddress,
-          title: 'Email Address',
-          hint: 'type in your email address',
-        ),
-        SizedBox(
-          height: 22.h,
-        ),
-        TextBox(
-          isPassword: true,
-          textInputType: TextInputType.text,
-          validator: FieldValidator.validatePassword,
-          focusNode: authController.passwordFocus,
-          textEditingController: authController.password,
-          title: 'Password',
-          hint: 'type password here',
-        ),
-        SizedBox(
-          height: 300.h,
-        ),
-      ];
-    }
+    // if (LoginTypes.newUser == loginType) {
+    //   return [
+    //     SizedBox(
+    //       height: 30.h,
+    //     ),
+    //     TextBox(
+    //       textInputType: TextInputType.text,
+    //       textCapitalization: TextCapitalization.characters,
+    //       validator: FieldValidator.validateNIN,
+    //       maxLength: 14,
+    //       focusNode: authController.nationalIDFocus,
+    //       textEditingController: authController.nationalID,
+    //       title: 'Enter NIN Number',
+    //       hint: 'eg CM546FDF54534FHS',
+    //     ),
+    //     SizedBox(
+    //       height: 22.h,
+    //     ),
+    //     TextBox(
+    //       textInputType: TextInputType.phone,
+    //       maxLength: 9,
+    //       validator: FieldValidator.validatePhone,
+    //       focusNode: authController.phoneNumberFocus,
+    //       textEditingController: authController.phoneNumber,
+    //       title: 'Phone Number',
+    //       hint: 'enter phone',
+    //     ),
+    //     SizedBox(
+    //       height: 300.h,
+    //     ),
+    //   ];
+    // } else {
+    return [
+      SizedBox(
+        height: 30.h,
+      ),
+      Text(
+        'Log in to continue',
+        style: TextStyle(fontSize: 20.sp, fontFamily: 'Poppins '),
+      ),
+      SizedBox(
+        height: 30.h,
+      ),
+      TextBox(
+        textInputType: TextInputType.text,
+        validator: FieldValidator.validateEmail,
+        focusNode: authController.emailFocus,
+        textEditingController: authController.emailAddress,
+        title: 'Email Address',
+        hint: 'type in your email address',
+      ),
+      SizedBox(
+        height: 22.h,
+      ),
+      TextBox(
+        isPassword: true,
+        textInputType: TextInputType.text,
+        validator: FieldValidator.validatePassword,
+        focusNode: authController.passwordFocus,
+        textEditingController: authController.password,
+        title: 'Password',
+        hint: 'type password here',
+      ),
+      SizedBox(
+        height: 300.h,
+      ),
+    ];
+    // }
   }
 
   @override
@@ -185,7 +172,7 @@ class _RegisterPageState extends State<RegisterPage> {
         return false;
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Color.fromARGB(255, 180, 203, 199),
         body: Obx(() {
           return PageView(
             physics: const NeverScrollableScrollPhysics(),
@@ -193,27 +180,34 @@ class _RegisterPageState extends State<RegisterPage> {
             children: [
               Stack(
                 children: <Widget>[
-                  AuthPageHeader(
-                    heading: LoginTypes.newUser == loginType
-                        ? 'REGISTER'
-                        : 'WELCOME BACK,\nSIGN IN',
-                    trigger: authController.trigger.value,
+                  Positioned(
+                    top: 90.h,
+                    left: 130.w,
+                    right: 130.w,
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          'assets/images/tuula_logo.png',
+                        ),
+                      ],
+                    ),
                   ),
                   Positioned(
-                      top: 60.h,
-                      right: 5.w,
-                      child: IconButton(
-                          onPressed: () {
-                            authController.showAboutDialog(context);
-                          },
-                          iconSize: 40.w,
-                          icon: const Icon(
-                            CupertinoIcons.question_circle_fill,
-                            color: Color.fromARGB(173, 44, 205, 217),
-                          ))),
+                    top: 180.h,
+                    left: 30.w,
+                    right: 30.w,
+                    child: Text(
+                      'Admin Controller',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 46.sp,
+                          fontWeight: FontWeight.w500),
+                    ),
+                  ),
                   Padding(
                     padding: EdgeInsets.only(
-                        top: authController.trigger.value ? 200.h : 400.h),
+                        top: authController.trigger.value ? 260.h : 420.h),
                     child: Form(
                       key: formKey,
                       child: ListView(
@@ -236,9 +230,9 @@ class _RegisterPageState extends State<RegisterPage> {
                               children: [
                                 Expanded(
                                   child: SizedBox(
-                                    height: 64.h,
+                                    height: 70.h,
                                     child: CupertinoButton(
-                                      borderRadius: BorderRadius.circular(10.r),
+                                      borderRadius: BorderRadius.circular(60.r),
                                       color: const Color(0xff007981),
                                       child: Text(
                                         LoginTypes.newUser == loginType
@@ -258,48 +252,25 @@ class _RegisterPageState extends State<RegisterPage> {
                                           currentFocus.focusedChild!.unfocus();
                                         }
 
-                                        if (LoginTypes.newUser == loginType) {
-                                          if (authController
-                                                      .nationalID.text.length ==
-                                                  14 &&
-                                              authController.phoneNumber.text
-                                                      .length ==
-                                                  9) {
-                                            if (validateAndSave()) {
-                                              GetStorage().write(
-                                                  'nin',
-                                                  authController
-                                                      .nationalID.value.text);
-                                              //authController.phoneAuth(context);
-                                            }
-                                          } else {
-                                            CustomOverlay.showToast(
-                                              'Enter NIN and correct phone number to continue',
-                                              Colors.red,
-                                              Colors.white,
-                                            );
+                                        if (authController
+                                                .emailAddress.text.isNotEmpty ||
+                                            authController
+                                                .password.text.isNotEmpty) {
+                                          if (validateAndSave()) {
+                                            var userDetails = EndUserModel(
+                                                emailAddress: authController
+                                                    .emailAddress.value.text,
+                                                password: authController
+                                                    .password.value.text);
+
+                                            await Server.userLogIn(
+                                                context, userDetails);
                                           }
                                         } else {
-                                          if (authController.emailAddress.text
-                                                  .isNotEmpty ||
-                                              authController
-                                                  .password.text.isNotEmpty) {
-                                            if (validateAndSave()) {
-                                              var userDetails = EndUserModel(
-                                                  emailAddress: authController
-                                                      .emailAddress.value.text,
-                                                  password: authController
-                                                      .password.value.text);
-
-                                              await Server.userLogIn(
-                                                  context, userDetails);
-                                            }
-                                          } else {
-                                            CustomOverlay.showToast(
-                                                'Fill out email and password to continue',
-                                                Colors.red,
-                                                Colors.white);
-                                          }
+                                          CustomOverlay.showToast(
+                                              'Fill out email and password to continue',
+                                              Colors.red,
+                                              Colors.white);
                                         }
                                       },
                                     ),
@@ -307,24 +278,24 @@ class _RegisterPageState extends State<RegisterPage> {
                                 ),
                               ],
                             ),
-                            TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    if (LoginTypes.newUser == loginType) {
-                                      loginType = LoginTypes.existingUser;
-                                    } else {
-                                      loginType = LoginTypes.newUser;
-                                    }
-                                  });
-                                },
-                                child: Text(
-                                  LoginTypes.newUser == loginType
-                                      ? 'Already have an account?, sign up'
-                                      : 'Don\'t have an account, sign up',
-                                  style: textButtonStyle,
-                                )),
+                            // TextButton(
+                            //     onPressed: () {
+                            //       setState(() {
+                            //         if (LoginTypes.newUser == loginType) {
+                            //           loginType = LoginTypes.existingUser;
+                            //         } else {
+                            //           loginType = LoginTypes.newUser;
+                            //         }
+                            //       });
+                            //     },
+                            //     child: Text(
+                            //       LoginTypes.newUser == loginType
+                            //           ? 'Already have an account?, sign up'
+                            //           : 'Don\'t have an account, sign up',
+                            //       style: textButtonStyle,
+                            //     )),
                             SizedBox(
-                              height: 20.h,
+                              height: 50.h,
                             )
                           ],
                         )),

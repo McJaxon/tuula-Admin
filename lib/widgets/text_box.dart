@@ -43,9 +43,9 @@ class _TextBoxState extends State<TextBox> {
           height: 7.h,
         ),
         Container(
-            height: 46.0,
+            height: 60.h,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.r),
+                borderRadius: BorderRadius.circular(50.r),
                 color: const Color(0xffF2F2F2)),
             child: TextFormField(
               obscureText: widget.isPassword,

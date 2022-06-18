@@ -23,10 +23,18 @@ List transactionSource = [
 
 ///api uri links
 ///base url
-var baseUrl = 'http://tuula_loan_app.test/api/v1';
+var baseUrl = 'http://tuulacredit.com/jubilant-waddle/public/api/v1';
 
 ///get dashboard
 Uri dashboardUrl = Uri.parse('$baseUrl/dashboard/get_all/');
+
+
+///get all users
+Uri getUsersUrl = Uri.parse('$baseUrl/user/get_all/');
+
+///get dashboard
+Uri allLoansUrl = Uri.parse('$baseUrl/loan/get_loan_applications');
+
 
 ///get loan categories
 Uri getUser = Uri.parse('$baseUrl/end_users');

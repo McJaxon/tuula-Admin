@@ -1,6 +1,7 @@
 import 'package:admin_banja/controllers/homePageController.dart';
 import 'package:admin_banja/screens/auth/register_page.dart';
-
+import 'package:admin_banja/screens/dash.dart';
+import 'package:admin_banja/screens/paymets.dart';
 import 'package:admin_banja/screens/records.dart';
 import 'package:admin_banja/screens/slips.dart';
 import 'package:flutter/material.dart';
@@ -10,24 +11,25 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-import '../controllers/userDetailsController.dart';
-
 class SliderView extends StatelessWidget {
   SliderView({
     Key? key,
   }) : super(key: key);
 
-  final UserDetailsController userDetails = Get.find();
+  //final UserDetailsController userDetails = Get.find();
   var homeController = Get.put(HomePageController());
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           end: Alignment.bottomCenter,
           begin: Alignment.topCenter,
-          colors: [const Color(0xff007981), Colors.lightGreen.shade300],
+          colors: [
+            Color.fromARGB(255, 7, 112, 86),
+            Color.fromARGB(255, 30, 214, 221)
+          ],
         ),
       ),
       padding: EdgeInsets.only(top: 30.h),
@@ -39,24 +41,16 @@ class SliderView extends StatelessWidget {
             SizedBox(
               height: 30.h,
             ),
-            GetStorage().read('profilePic') == null
-                ? Container()
-                : CircleAvatar(
-                    radius: 65.r,
-                    backgroundColor: Colors.grey,
-                    child: CircleAvatar(
-                      radius: 60.r,
-                      backgroundImage: NetworkImage(
-                          'https://f120-41-75-189-168.ngrok.io' +
-                              GetStorage().read('profilePic')),
-                    ),
-                  ),
+            Image.asset(
+              'assets/images/tuula_logo.png',
+              width: 180.w,
+            ),
             SizedBox(
               height: 20.h,
             ),
             Text(
               GetStorage().read('fullNames') == null
-                  ? 'Hello there'
+                  ? 'Hello Admin'
                   : 'Hi, ${GetStorage().read('fullNames')}',
               style: TextStyle(
                   color: Colors.white,
@@ -85,27 +79,33 @@ class SliderView extends StatelessWidget {
             SizedBox(
               height: 20.h,
             ),
-            // _SliderMenuItem(
-            //     canPop: true,
-            //     title: 'Home',
-            //     iconData: 'Home',
-            //     screen: const Dashboard()),
-            // _SliderMenuItem(
-            //     title: 'Make Deposit',
-            //     iconData: 'Wallet',
-            //     screen: const MakeDeposit()),
+            const Spacer(),
             _SliderMenuItem(
-                title: 'Records',
-                iconData: 'Chart',
-                screen: const RecordsPage()),
-            // _SliderMenuItem(
-            //     title: 'CashBack',
-            //     iconData: 'Discount',
-            //     screen: const Cashback()),
+                canPop: true,
+                title: 'Home',
+                iconData: 'Home',
+                screen: const Dash()),
             _SliderMenuItem(
-                title: 'Slips',
+                title: 'Payments',
+                iconData: 'Wallet',
+                screen: const PaymentsPage()),
+            _SliderMenuItem(
+                title: 'Referrals',
+                iconData: 'Discount',
+                screen: const Slips()),
+            _SliderMenuItem(
+                title: 'App Data',
                 iconData: 'Paper Download',
                 screen: const Slips()),
+            _SliderMenuItem(
+                title: 'Users & Roles',
+                iconData: 'Chart',
+                screen: const Slips()),
+            _SliderMenuItem(
+                title: 'Admin Profile',
+                iconData: 'Chart',
+                screen: const Slips()),
+            const Spacer(),
             const Spacer(),
             _SliderMenuItem(
                 logout: true,
