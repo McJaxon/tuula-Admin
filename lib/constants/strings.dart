@@ -28,15 +28,20 @@ var baseUrl = 'http://tuulacredit.com/jubilant-waddle/public/api/v1';
 ///get dashboard
 Uri dashboardUrl = Uri.parse('$baseUrl/dashboard/get_all/');
 
-
 ///get all users
 Uri getUsersUrl = Uri.parse('$baseUrl/user/get_all/');
 
 ///get dashboard
 Uri allLoansUrl = Uri.parse('$baseUrl/loan/get_loan_applications');
 
-
 ///get loan categories
 Uri getUser = Uri.parse('$baseUrl/end_users');
 
+///get all payments
+Uri getAllPayments = Uri.parse('$baseUrl/payments/get_all');
 
+///get all loan categories
+Uri getAllLoanTypes = Uri.parse('$baseUrl/loan/get_all_loan_categories');
+
+///create new loan category
+Uri postLoanType = Uri.parse('$baseUrl/loan/new_loan_category');
