@@ -90,37 +90,37 @@ class LoanApplicationModel {
   }
 }
 
-class LoanCategoryModel {
-  LoanCategoryModel(
-      {this.abbreviation,
-      required this.id,
-      required this.loanType,
-      required this.description});
+// class LoanCategoryModel {
+//   LoanCategoryModel(
+//       {this.abbreviation,
+//       required this.id,
+//       required this.loanType,
+//       required this.description});
 
-  factory LoanCategoryModel.fromJson(Map<String, dynamic> json) {
-    return LoanCategoryModel(
-      id: json['id'],
-      loanType: json['loan_type'],
-      abbreviation: json['abbreviation'],
-      description: json['description'],
-    );
-  }
+//   factory LoanCategoryModel.fromJson(Map<String, dynamic> json) {
+//     return LoanCategoryModel(
+//       id: json['id'],
+//       loanType: json['loan_type'],
+//       abbreviation: json['abbreviation'],
+//       description: json['description'],
+//     );
+//   }
 
-  final int id;
-  final String loanType;
-  final String? abbreviation, description;
+//   final int id;
+//   final String loanType;
+//   final String? abbreviation, description;
 
-  Map<String, dynamic> toMap() {
-    var map = <String, dynamic>{
-      'id': id,
-      'loan_type': loanType,
-      'abbreviation': abbreviation,
-      'description': description
-    };
+//   Map<String, dynamic> toMap() {
+//     var map = <String, dynamic>{
+//       'id': id,
+//       'loan_type': loanType,
+//       'abbreviation': abbreviation,
+//       'description': description
+//     };
 
-    return map;
-  }
-}
+//     return map;
+//   }
+// }
 
 class EndUserModel {
   EndUserModel(

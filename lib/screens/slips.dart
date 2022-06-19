@@ -31,7 +31,7 @@ class _SlipsState extends State<Slips> {
           )),
       body: Stack(
         children: <Widget>[
-           PageHeader(
+          PageHeader(
             heading: 'Slips',
           ),
           Positioned(
@@ -53,7 +53,6 @@ class _SlipsState extends State<Slips> {
               SizedBox(
                 height: 200.h,
               ),
-
               Text(
                 'You currently have no payment slips available',
                 textAlign: TextAlign.center,
