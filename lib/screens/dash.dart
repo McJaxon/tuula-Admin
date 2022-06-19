@@ -18,6 +18,7 @@ import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../controllers/dashboard_controller.dart';
 
 class Dash extends StatefulWidget {
@@ -58,797 +59,806 @@ class _DashState extends State<Dash> with TickerProviderStateMixin {
                 dashController.sliderKey.currentState?.closeSlider();
               },
               child: Container(
-                  color: const Color.fromARGB(255, 200, 227, 229),
-                  child: Stack(children: [
-
-                    PageView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      controller: dashController.controller,
-                      children: [
-                        FutureBuilder(
-                            future: Server().fetchData(),
-                            builder: (context, AsyncSnapshot snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const LoadingData();
-                              } else if (snapshot.hasError) {
-                                return const NetworkError();
-                              } else if (snapshot.data == null) {
-                                return const NoRecordError();
-                              } else {
-                                return CupertinoScrollbar(
-                                  child: SingleChildScrollView(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        SizedBox(height: 160.h),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 14.w),
+                color: const Color.fromARGB(255, 200, 227, 229),
+                child: Stack(children: [
+                  PageView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    controller: dashController.controller,
+                    children: [
+                      FutureBuilder(
+                          future: Server().fetchData(),
+                          builder: (context, AsyncSnapshot snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return const LoadingData();
+                            } else if (snapshot.hasError) {
+                              return const NetworkError();
+                            } else if (snapshot.data == null) {
+                              return const NoRecordError();
+                            } else {
+                              return CupertinoScrollbar(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      SizedBox(height: 160.h),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 14.w),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                                'Today: ${DateFormat().format(DateTime.now())}',
+                                                style: TextStyle(
+                                                    fontFamily: 'Poppins',
+                                                    fontSize: 22.sp)),
+                                            Text(
+                                                'Last Updated: ${DateFormat().format(DateTime.now())}',
+                                                style: TextStyle(
+                                                    fontFamily: 'Poppins',
+                                                    fontSize: 16.sp)),
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            left: 10.w, top: 50.h),
+                                        child: SizedBox(
+                                            height: 225.h,
+                                            child: Swiper(
+                                              itemCount: snapshot
+                                                  .data['payload']['loan_stats']
+                                                      ['percentages']
+                                                  .length,
+                                              autoplay: true,
+                                              autoplayDelay: 6000,
+                                              controller:
+                                                  dashController.cardController,
+                                              itemWidth: 475.w,
+                                              layout: SwiperLayout.STACK,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                dashController.currentCard =
+                                                    index + 1;
+                                                return PercentageCard(
+                                                  dashController:
+                                                      dashController,
+                                                  index: index,
+                                                  snapshot: snapshot,
+                                                );
+                                              },
+                                            )),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          HapticFeedback.lightImpact();
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 30.0,
+                                              left: 20.w,
+                                              right: 20.w),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                  'Today: ${DateFormat().format(DateTime.now())}',
-                                                  style: TextStyle(
-                                                      fontFamily: 'Poppins',
-                                                      fontSize: 22.sp)),
-                                              Text(
-                                                  'Last Updated: ${DateFormat().format(DateTime.now())}',
-                                                  style: TextStyle(
-                                                      fontFamily: 'Poppins',
-                                                      fontSize: 16.sp)),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 10.w, top: 50.h),
-                                          child: SizedBox(
-                                              height: 225.h,
-                                              child: Swiper(
-                                                itemCount: snapshot
-                                                    .data['payload']
-                                                        ['loan_stats']
-                                                        ['percentages']
-                                                    .length,
-                                                autoplay: true,
-                                                autoplayDelay: 6000,
-                                                controller: dashController
-                                                    .cardController,
-                                                itemWidth: 475.w,
-                                                layout: SwiperLayout.STACK,
-                                                itemBuilder:
-                                                    (BuildContext context,
-                                                        int index) {
-                                                  dashController.currentCard =
-                                                      index + 1;
-                                                  return PercentageCard(
-                                                    dashController:
-                                                        dashController,
-                                                    index: index,
-                                                    snapshot: snapshot,
-                                                  );
-                                                },
-                                              )),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            HapticFeedback.lightImpact();
-                                          },
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                                top: 30.0,
-                                                left: 20.w,
-                                                right: 20.w),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Yearly Statistics - Loan Applicants',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      fontFamily: 'Poppins',
-                                                      fontSize: 18.sp),
-                                                ),
-                                                SizedBox(
-                                                  height: 10.h,
-                                                ),
-                                                Container(
-                                                  height: 240.h,
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              22.r),
-                                                      color: Colors.white),
-                                                  child: Padding(
-                                                    padding: EdgeInsets.only(
-                                                        top: 44.h,
-                                                        left: 10.w,
-                                                        right: 10.w),
-                                                    child: BarChart(
-                                                      BarChartData(
-                                                        barTouchData:
-                                                            barTouchData,
-                                                        titlesData: dashController
-                                                            .titlesEducationData,
-                                                        borderData: borderData,
-                                                        barGroups: List.from(
-                                                            snapshot
-                                                                .data['payload']
-                                                                    [
-                                                                    'yearly_stats']
-                                                                    ['2022']
-                                                                .map(
-                                                          (value) =>
-                                                              BarChartGroupData(
-                                                            x: snapshot
-                                                                .data['payload']
-                                                                    [
-                                                                    'yearly_stats']
-                                                                    ['2022']
-                                                                .indexOf(value),
-                                                            barRods: [
-                                                              BarChartRodData(
-                                                                  y: double.parse(value[
-                                                                          'count']
-                                                                      .toString()),
-                                                                  colors: [
-                                                                    Colors
-                                                                        .lightBlueAccent,
-                                                                    Colors
-                                                                        .greenAccent
-                                                                  ])
-                                                            ],
-                                                            showingTooltipIndicators: [
-                                                              0
-                                                            ],
-                                                          ),
-                                                        )),
-                                                        alignment:
-                                                            BarChartAlignment
-                                                                .spaceAround,
-                                                        //maxY: 750,
-                                                      ),
+                                                'Yearly Statistics - Loan Applicants',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontFamily: 'Poppins',
+                                                    fontSize: 18.sp),
+                                              ),
+                                              SizedBox(
+                                                height: 10.h,
+                                              ),
+                                              Container(
+                                                height: 240.h,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            22.r),
+                                                    color: Colors.white),
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      top: 44.h,
+                                                      left: 10.w,
+                                                      right: 10.w),
+                                                  child: BarChart(
+                                                    BarChartData(
+                                                      barTouchData:
+                                                          barTouchData,
+                                                      titlesData: dashController
+                                                          .titlesEducationData,
+                                                      borderData: borderData,
+                                                      barGroups: List.from(
+                                                          snapshot
+                                                              .data['payload'][
+                                                                  'yearly_stats']
+                                                                  ['2022']
+                                                              .map(
+                                                        (value) =>
+                                                            BarChartGroupData(
+                                                          x: snapshot
+                                                              .data['payload'][
+                                                                  'yearly_stats']
+                                                                  ['2022']
+                                                              .indexOf(value),
+                                                          barRods: [
+                                                            BarChartRodData(
+                                                                y: double.parse(
+                                                                    value['count']
+                                                                        .toString()),
+                                                                colors: [
+                                                                  Colors
+                                                                      .lightBlueAccent,
+                                                                  Colors
+                                                                      .greenAccent
+                                                                ])
+                                                          ],
+                                                          showingTooltipIndicators: [
+                                                            0
+                                                          ],
+                                                        ),
+                                                      )),
+                                                      alignment:
+                                                          BarChartAlignment
+                                                              .spaceAround,
+                                                      //maxY: 750,
                                                     ),
                                                   ),
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                        CurrentLoanApplications(
-                                            currentApplications: snapshot
-                                                    .data['payload']
-                                                ['pending_loan_applications']),
-                                        const DefaulterSection(),
-                                        SizedBox(
-                                          height: 170.h,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }
-                            }),
-                        Stack(
-                          children: [
-                            FutureBuilder(
-                                future: Future.wait([
-                                  Server().fetchUsers(),
-                                  Server().fetchLoans()
-                                ]),
-                                builder: (context, AsyncSnapshot snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const LoadingData();
-                                  } else if (snapshot.hasError) {
-                                    return const NetworkError();
-                                  } else if (snapshot.data == null) {
-                                    return const NoRecordError();
-                                  } else {
-                                    return Stack(children: [
-                                      PageView(
-                                        controller:
-                                            dashController.tabPageController,
-                                        onPageChanged: (page) {
-                                          dashController.tabController
-                                              .animateTo(page.toInt());
-                                        },
-                                        children: [
-                                          ListView.builder(
-                                            padding: EdgeInsets.only(
-                                                top: 240.h, bottom: 200.h),
-                                            itemCount: snapshot
-                                                .data[0]['payload'].length,
-                                            itemBuilder: ((context, index) {
-                                              return Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10.r)),
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.all(26.w),
-                                                    child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Text(
-                                                                    snapshot.data[0]['payload']
-                                                                            [
-                                                                            index]
-                                                                        [
-                                                                        'full_names'],
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .black87,
-                                                                        fontFamily:
-                                                                            'Poppins',
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w500,
-                                                                        fontSize:
-                                                                            23.sp),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height:
-                                                                        10.h,
-                                                                  ),
-                                                                  Row(
-                                                                    children: [
-                                                                      Text(
-                                                                        'NIN:',
-                                                                        style: TextStyle(
-                                                                            color: Colors
-                                                                                .black54,
-                                                                            fontFamily:
-                                                                                'Poppins',
-                                                                            fontWeight:
-                                                                                FontWeight.w600,
-                                                                            fontSize: 18.sp),
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            10.w,
-                                                                      ),
-                                                                      Text(
-                                                                        snapshot.data[0]['payload'][index]
-                                                                            [
-                                                                            'nin'],
-                                                                        style: TextStyle(
-                                                                            color: Colors
-                                                                                .black,
-                                                                            fontFamily:
-                                                                                'Poppins',
-                                                                            fontWeight:
-                                                                                FontWeight.w200,
-                                                                            fontSize: 18.sp),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              const Spacer(),
-                                                              CircleAvatar(
-                                                                  radius: 40.r,
-                                                                  backgroundImage:
-                                                                      NetworkImage(
-                                                                    snapshot.data[0]['payload']
-                                                                            [
-                                                                            index]
-                                                                        [
-                                                                        'profile_pic'],
-                                                                  )),
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: 10.h,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                'Location:',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black54,
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    fontSize:
-                                                                        18.sp),
-                                                              ),
-                                                              SizedBox(
-                                                                  width: 10.w),
-                                                              Text(
-                                                                snapshot.data[0]
-                                                                            [
-                                                                            'payload']
-                                                                        [index][
-                                                                    'location'],
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w200,
-                                                                    fontSize:
-                                                                        18.sp),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: 15.h,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                'Phone number:',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black54,
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    fontSize:
-                                                                        18.sp),
-                                                              ),
-                                                              SizedBox(
-                                                                  width: 10.w),
-                                                              Text(
-                                                                snapshot.data[0]
-                                                                            [
-                                                                            'payload']
-                                                                        [index][
-                                                                    'phone_number'],
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w200,
-                                                                    fontSize:
-                                                                        18.sp),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: 15.h,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                'Email:',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black54,
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    fontSize:
-                                                                        18.sp),
-                                                              ),
-                                                              SizedBox(
-                                                                  width: 10.w),
-                                                              Text(
-                                                                snapshot.data[0]
-                                                                            [
-                                                                            'payload']
-                                                                        [index]
-                                                                    ['email'],
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w200,
-                                                                    fontSize:
-                                                                        18.sp),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ]),
-                                                  ),
-                                                ),
-                                              );
-                                            }),
-                                          ),
-                                          ListView.builder(
-                                            padding: EdgeInsets.only(
-                                                top: 240.h, bottom: 200.h),
-                                            itemCount: snapshot
-                                                .data[1]['payload'].length,
-                                            itemBuilder: ((context, index) {
-                                              return Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10.r)),
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.all(26.w),
-                                                    child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Text(
-                                                                    snapshot.data[1]['payload']
-                                                                            [
-                                                                            index]
-                                                                        [
-                                                                        'loan_type'],
-                                                                    style: TextStyle(
-                                                                        color: Colors
-                                                                            .black87,
-                                                                        fontFamily:
-                                                                            'Poppins',
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w500,
-                                                                        fontSize:
-                                                                            20.sp),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height:
-                                                                        10.h,
-                                                                  ),
-                                                                  Row(
-                                                                    children: [
-                                                                      Text(
-                                                                        'Applicant:',
-                                                                        style: TextStyle(
-                                                                            color: Colors
-                                                                                .black54,
-                                                                            fontFamily:
-                                                                                'Poppins',
-                                                                            fontWeight:
-                                                                                FontWeight.w600,
-                                                                            fontSize: 16.sp),
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            10.w,
-                                                                      ),
-                                                                      Text(
-                                                                        snapshot.data[1]['payload'][index]
-                                                                            [
-                                                                            'full_names'],
-                                                                        style: TextStyle(
-                                                                            color: Colors
-                                                                                .black,
-                                                                            fontFamily:
-                                                                                'Poppins',
-                                                                            fontWeight:
-                                                                                FontWeight.w200,
-                                                                            fontSize: 16.sp),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  SizedBox(
-                                                                      height:
-                                                                          5.h),
-                                                                  Row(
-                                                                    children: [
-                                                                      Text(
-                                                                        'NIN:',
-                                                                        style: TextStyle(
-                                                                            color: Colors
-                                                                                .black54,
-                                                                            fontFamily:
-                                                                                'Poppins',
-                                                                            fontWeight:
-                                                                                FontWeight.w600,
-                                                                            fontSize: 16.sp),
-                                                                      ),
-                                                                      SizedBox(
-                                                                        width:
-                                                                            10.w,
-                                                                      ),
-                                                                      Text(
-                                                                        snapshot.data[1]['payload'][index]
-                                                                            [
-                                                                            'nin'],
-                                                                        style: TextStyle(
-                                                                            color: Colors
-                                                                                .black,
-                                                                            fontFamily:
-                                                                                'Poppins',
-                                                                            fontWeight:
-                                                                                FontWeight.w200,
-                                                                            fontSize: 16.sp),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              const Spacer(),
-                                                              CircleAvatar(
-                                                                  radius: 40.r,
-                                                                  backgroundImage:
-                                                                      NetworkImage(
-                                                                    snapshot.data[1]['payload']
-                                                                            [
-                                                                            index]
-                                                                        [
-                                                                        'profile_pic'],
-                                                                  )),
-                                                            ],
-                                                          ),
-                                                          const Divider(
-                                                            color:
-                                                                Colors.black38,
-                                                          ),
-                                                          SizedBox(
-                                                            height: 10.h,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                'Amount:',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black54,
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    fontSize:
-                                                                        16.sp),
-                                                              ),
-                                                              const Spacer(),
-                                                              Text(
-                                                                'UGX ${snapshot.data[1]['payload'][index]['loan_amount']}/=',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w200,
-                                                                    fontSize:
-                                                                        16.sp),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          SizedBox(height: 4.h),
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                'Payout:',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black54,
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    fontSize:
-                                                                        18.sp),
-                                                              ),
-                                                              const Spacer(),
-                                                              Text(
-                                                                'UGX ${snapshot.data[1]['payload'][index]['pay_back']}/=',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w200,
-                                                                    fontSize:
-                                                                        18.sp),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: 4.h,
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                'Outstanding balance:',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black54,
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    fontSize:
-                                                                        18.sp),
-                                                              ),
-                                                              const Spacer(),
-                                                              Text(
-                                                                'UGX ${snapshot.data[1]['payload'][index]['outstanding_balance']}/=',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontFamily:
-                                                                        'Poppins',
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w200,
-                                                                    fontSize:
-                                                                        18.sp),
-                                                              ),
-                                                            ],
-                                                          )
-                                                        ]),
-                                                  ),
-                                                ),
-                                              );
-                                            }),
-                                          ),
-                                        ],
                                       ),
-                                    ]);
-                                  }
-                                }),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 132.0),
-                              child: ClipRRect(
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                      sigmaX: 20.0, sigmaY: 20.0),
-                                  child: Container(
-                                    height: 60.h,
-                                    width: double.infinity,
-                                    color: Colors.white12,
-                                    child: TabBar(
-                                      controller: dashController.tabController,
-                                      onTap: (int page) {
-                                        dashController.tabCurrentPage = page;
-
-                                        dashController.tabPageController
-                                            .animateToPage(
-                                                dashController.tabCurrentPage,
-                                                duration: const Duration(
-                                                    milliseconds: 300),
-                                                curve: Curves.easeIn);
+                                      CurrentLoanApplications(
+                                          currentApplications: snapshot
+                                                  .data['payload']
+                                              ['pending_loan_applications']),
+                                      DefaulterSection(defaulter: snapshot
+                                                  .data['payload']
+                                              ['pending_loan_applications']),
+                                      SizedBox(
+                                        height: 170.h,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+                          }),
+                      Stack(
+                        children: [
+                          FutureBuilder(
+                              future: Future.wait([
+                                Server().fetchUsers(),
+                                Server().fetchLoans()
+                              ]),
+                              builder: (context, AsyncSnapshot snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const LoadingData();
+                                } else if (snapshot.hasError) {
+                                  return const NetworkError();
+                                } else if (snapshot.data == null) {
+                                  return const NoRecordError();
+                                } else {
+                                  return Stack(children: [
+                                    PageView(
+                                      controller:
+                                          dashController.tabPageController,
+                                      onPageChanged: (page) {
+                                        dashController.tabController
+                                            .animateTo(page.toInt());
                                       },
-                                      tabs: const [
-                                        Tab(
-                                          child: Text(
-                                            'All Users',
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontFamily: 'Poppins',
-                                                fontSize: 14.0,
-                                                fontWeight: FontWeight.w500),
-                                          ),
+                                      children: [
+                                        ListView.builder(
+                                          padding: EdgeInsets.only(
+                                              top: 240.h, bottom: 200.h),
+                                          itemCount: snapshot
+                                              .data[0]['payload'].length,
+                                          itemBuilder: ((context, index) {
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10.r)),
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(26.w),
+                                                  child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  snapshot.data[0]
+                                                                              [
+                                                                              'payload']
+                                                                          [
+                                                                          index]
+                                                                      [
+                                                                      'full_names'],
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .black87,
+                                                                      fontFamily:
+                                                                          'Poppins',
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      fontSize:
+                                                                          23.sp),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 10.h,
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      'NIN:',
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .black54,
+                                                                          fontFamily:
+                                                                              'Poppins',
+                                                                          fontWeight: FontWeight
+                                                                              .w600,
+                                                                          fontSize:
+                                                                              18.sp),
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width:
+                                                                          10.w,
+                                                                    ),
+                                                                    Text(
+                                                                      snapshot.data[0]['payload']
+                                                                              [
+                                                                              index]
+                                                                          [
+                                                                          'nin'],
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .black,
+                                                                          fontFamily:
+                                                                              'Poppins',
+                                                                          fontWeight: FontWeight
+                                                                              .w200,
+                                                                          fontSize:
+                                                                              18.sp),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            const Spacer(),
+                                                            CircleAvatar(
+                                                                radius: 40.r,
+                                                                backgroundImage:
+                                                                    NetworkImage(
+                                                                  snapshot.data[0]
+                                                                              [
+                                                                              'payload']
+                                                                          [
+                                                                          index]
+                                                                      [
+                                                                      'profile_pic'],
+                                                                )),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10.h,
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                                              'Location:',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black54,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize:
+                                                                      18.sp),
+                                                            ),
+                                                            SizedBox(
+                                                                width: 10.w),
+                                                            Text(
+                                                              snapshot.data[0][
+                                                                          'payload']
+                                                                      [index]
+                                                                  ['location'],
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w200,
+                                                                  fontSize:
+                                                                      18.sp),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 15.h,
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                                              'Phone number:',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black54,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize:
+                                                                      18.sp),
+                                                            ),
+                                                            SizedBox(
+                                                                width: 10.w),
+                                                            Text(
+                                                              snapshot.data[0][
+                                                                          'payload']
+                                                                      [index][
+                                                                  'phone_number'],
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w200,
+                                                                  fontSize:
+                                                                      18.sp),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 15.h,
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                                              'Email:',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black54,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize:
+                                                                      18.sp),
+                                                            ),
+                                                            SizedBox(
+                                                                width: 10.w),
+                                                            Text(
+                                                              snapshot.data[0][
+                                                                      'payload']
+                                                                  [
+                                                                  index]['email'],
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w200,
+                                                                  fontSize:
+                                                                      18.sp),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ]),
+                                                ),
+                                              ),
+                                            );
+                                          }),
                                         ),
-                                        Tab(
-                                          child: Text(
-                                            'Applications',
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontFamily: 'Poppins',
-                                                fontSize: 14.0,
-                                                fontWeight: FontWeight.w500),
-                                          ),
+                                        ListView.builder(
+                                          padding: EdgeInsets.only(
+                                              top: 240.h, bottom: 200.h),
+                                          itemCount: snapshot
+                                              .data[1]['payload'].length,
+                                          itemBuilder: ((context, index) {
+                                            return Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10.r)),
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(26.w),
+                                                  child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  snapshot.data[1]
+                                                                              [
+                                                                              'payload']
+                                                                          [
+                                                                          index]
+                                                                      [
+                                                                      'loan_type'],
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .black87,
+                                                                      fontFamily:
+                                                                          'Poppins',
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                      fontSize:
+                                                                          20.sp),
+                                                                ),
+                                                                SizedBox(
+                                                                  height: 10.h,
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      'Applicant:',
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .black54,
+                                                                          fontFamily:
+                                                                              'Poppins',
+                                                                          fontWeight: FontWeight
+                                                                              .w600,
+                                                                          fontSize:
+                                                                              16.sp),
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width:
+                                                                          10.w,
+                                                                    ),
+                                                                    Text(
+                                                                      snapshot.data[1]['payload']
+                                                                              [
+                                                                              index]
+                                                                          [
+                                                                          'full_names'],
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .black,
+                                                                          fontFamily:
+                                                                              'Poppins',
+                                                                          fontWeight: FontWeight
+                                                                              .w200,
+                                                                          fontSize:
+                                                                              16.sp),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                SizedBox(
+                                                                    height:
+                                                                        5.h),
+                                                                Row(
+                                                                  children: [
+                                                                    Text(
+                                                                      'NIN:',
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .black54,
+                                                                          fontFamily:
+                                                                              'Poppins',
+                                                                          fontWeight: FontWeight
+                                                                              .w600,
+                                                                          fontSize:
+                                                                              16.sp),
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width:
+                                                                          10.w,
+                                                                    ),
+                                                                    Text(
+                                                                      snapshot.data[1]['payload']
+                                                                              [
+                                                                              index]
+                                                                          [
+                                                                          'nin'],
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .black,
+                                                                          fontFamily:
+                                                                              'Poppins',
+                                                                          fontWeight: FontWeight
+                                                                              .w200,
+                                                                          fontSize:
+                                                                              16.sp),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            const Spacer(),
+                                                            CircleAvatar(
+                                                                radius: 40.r,
+                                                                backgroundImage:
+                                                                    NetworkImage(
+                                                                  snapshot.data[1]
+                                                                              [
+                                                                              'payload']
+                                                                          [
+                                                                          index]
+                                                                      [
+                                                                      'profile_pic'],
+                                                                )),
+                                                          ],
+                                                        ),
+                                                        const Divider(
+                                                          color: Colors.black38,
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10.h,
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                                              'Amount:',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black54,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize:
+                                                                      16.sp),
+                                                            ),
+                                                            const Spacer(),
+                                                            Text(
+                                                              'UGX ${snapshot.data[1]['payload'][index]['loan_amount']}/=',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w200,
+                                                                  fontSize:
+                                                                      16.sp),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: 4.h),
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                                              'Payout:',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black54,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize:
+                                                                      18.sp),
+                                                            ),
+                                                            const Spacer(),
+                                                            Text(
+                                                              'UGX ${snapshot.data[1]['payload'][index]['pay_back']}/=',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w200,
+                                                                  fontSize:
+                                                                      18.sp),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          height: 4.h,
+                                                        ),
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                                              'Outstanding balance:',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black54,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize:
+                                                                      18.sp),
+                                                            ),
+                                                            const Spacer(),
+                                                            Text(
+                                                              'UGX ${snapshot.data[1]['payload'][index]['outstanding_balance']}/=',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w200,
+                                                                  fontSize:
+                                                                      18.sp),
+                                                            ),
+                                                          ],
+                                                        )
+                                                      ]),
+                                                ),
+                                              ),
+                                            );
+                                          }),
                                         ),
                                       ],
                                     ),
+                                  ]);
+                                }
+                              }),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 132.0),
+                            child: ClipRRect(
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(
+                                    sigmaX: 20.0, sigmaY: 20.0),
+                                child: Container(
+                                  height: 60.h,
+                                  width: double.infinity,
+                                  color: Colors.white12,
+                                  child: TabBar(
+                                    controller: dashController.tabController,
+                                    onTap: (int page) {
+                                      dashController.tabCurrentPage = page;
+
+                                      dashController.tabPageController
+                                          .animateToPage(
+                                              dashController.tabCurrentPage,
+                                              duration: const Duration(
+                                                  milliseconds: 300),
+                                              curve: Curves.easeIn);
+                                    },
+                                    tabs: const [
+                                      Tab(
+                                        child: Text(
+                                          'All Users',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontFamily: 'Poppins',
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                      Tab(
+                                        child: Text(
+                                          'Applications',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontFamily: 'Poppins',
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
                             ),
-                          ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  ClipRRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+                      child: Container(
+                        height: 140.h,
+                        width: double.infinity,
+                        color: Colors.white12,
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 24.h, right: 10.w),
+                          child: Row(children: [
+                            IconButton(
+                                icon:const Icon(
+                                  Icons.menu,
+                                ),
+                                onPressed: () {
+                                  dashController.sliderKey.currentState
+                                      ?.openSlider();
+                                }),
+                            Text(
+                              'Tuula Admin Dash',
+                              style: TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 32.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            // const Spacer(),
+                            // if (dashController.currentIndex.value == 0) ...[
+                            //   IconButton(
+                            //       onPressed: () {},
+                            //       icon: const Icon(CupertinoIcons.bell))
+                            // ] else ...[
+                            //   IconButton(
+                            //       onPressed: () {},
+                            //       icon: SvgPicture.asset(
+                            //           'assets/images/Filter 2.svg'))
+                            // ]
+                          ]),
                         ),
-                      ],
+                      ),
                     ),
-                    ClipRRect(
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ClipRRect(
                       child: BackdropFilter(
                         filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
                         child: Container(
-                          height: 140.h,
-                          width: double.infinity,
                           color: Colors.white12,
-                          child: Padding(
-                            padding: EdgeInsets.only(top: 24.h, right: 10.w),
-                            child: Row(children: [
-                              IconButton(
-                                  icon: Icon(
-                                    Icons.menu,
-                                  ),
-                                  onPressed: () {
-                                    dashController.sliderKey.currentState
-                                        ?.openSlider();
-                                  }),
-                              Text(
-                                'Tuula Admin Das',
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 32.sp,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const Spacer(),
-                              if (dashController.currentIndex.value == 0) ...[
-                                IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(CupertinoIcons.bell))
-                              ] else ...[
-                                IconButton(
-                                    onPressed: () {},
-                                    icon: SvgPicture.asset(
-                                        'assets/images/Filter 2.svg'))
-                              ]
-                            ]),
-                          ),
+                          child: BottomNavigationBar(
+                              elevation: 0.0,
+                              currentIndex: dashController.currentIndex.value,
+                              onTap: dashController.onTapped,
+                              backgroundColor: Colors.transparent,
+                              items: dashController.navigationBarItems),
                         ),
                       ),
                     ),
-                    Align(
-                      alignment: Alignment.bottomCenter,
-                      child: ClipRRect(
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
-                          child: Container(
-                            color: Colors.white12,
-                            child: BottomNavigationBar(
-                                elevation: 0.0,
-                                currentIndex: dashController.currentIndex.value,
-                                onTap: dashController.onTapped,
-                                backgroundColor: Colors.transparent,
-                                items: dashController.navigationBarItems),
-                          ),
-                        ),
-                      ),
-                    )
-
-                  ]),),
+                  )
+                ]),
+              ),
             )));
   }
 
@@ -880,12 +890,18 @@ class _DashState extends State<Dash> with TickerProviderStateMixin {
       );
 }
 
-class CurrentLoanApplications extends StatelessWidget {
+class CurrentLoanApplications extends StatefulWidget {
   const CurrentLoanApplications({Key? key, required this.currentApplications})
       : super(key: key);
 
   final List currentApplications;
 
+  @override
+  State<CurrentLoanApplications> createState() =>
+      _CurrentLoanApplicationsState();
+}
+
+class _CurrentLoanApplicationsState extends State<CurrentLoanApplications> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -913,6 +929,7 @@ class CurrentLoanApplications extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) => MoreDetails(
                               title: 'Current Loan Applications',
+                              data: widget.currentApplications
                             )));
               },
               label: Text(
@@ -929,7 +946,7 @@ class CurrentLoanApplications extends StatelessWidget {
             ),
           ],
         ),
-        currentApplications.isEmpty
+        widget.currentApplications.isEmpty
             ? Padding(
                 padding: EdgeInsets.symmetric(vertical: 100.h),
                 child: Column(children: <Widget>[
@@ -946,7 +963,7 @@ class CurrentLoanApplications extends StatelessWidget {
             : SizedBox(
                 height: 210.h,
                 child: Swiper(
-                  itemCount: currentApplications.length,
+                  itemCount: widget.currentApplications.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
                       height: 200.0,
@@ -968,7 +985,7 @@ class CurrentLoanApplications extends StatelessWidget {
                                       fontSize: 17.sp),
                                 ),
                                 const Spacer(),
-                                Text(currentApplications[index]['nin'],
+                                Text(widget.currentApplications[index]['nin'],
                                     style: TextStyle(
                                         fontWeight: FontWeight.w400,
                                         fontFamily: 'Poppins',
@@ -1001,7 +1018,7 @@ class CurrentLoanApplications extends StatelessWidget {
                                         fontSize: 17.sp)),
                                 const Spacer(),
                                 Text(
-                                    '${currentApplications[index]['loan_amount']}',
+                                    '${widget.currentApplications[index]['loan_amount']}',
                                     style: TextStyle(
                                         fontWeight: FontWeight.w400,
                                         fontFamily: 'Poppins',
@@ -1012,13 +1029,15 @@ class CurrentLoanApplications extends StatelessWidget {
                             Row(
                               children: [
                                 Text(
-                                    'Remittance - ${currentApplications[index]['payment_time']}:',
+                                    'Remittance - ${widget.currentApplications[index]['payment_time']}:',
                                     style: TextStyle(
                                         fontWeight: FontWeight.w500,
                                         fontFamily: 'Poppins',
                                         fontSize: 17.sp)),
                                 const Spacer(),
-                                Text(currentApplications[index]['payment_mode'],
+                                Text(
+                                    widget.currentApplications[index]
+                                        ['payment_mode'],
                                     style: TextStyle(
                                         fontWeight: FontWeight.w400,
                                         fontFamily: 'Poppins',
@@ -1031,8 +1050,17 @@ class CurrentLoanApplications extends StatelessWidget {
                                 ActionChip(
                                   backgroundColor: Colors.green,
                                   onPressed: () {
-                                    Server().acceptLoanService(
-                                        currentApplications[index]['id']);
+                                    Server()
+                                        .acceptLoanService(
+                                            context,
+                                            widget.currentApplications[index]
+                                                ['id'])
+                                        .then((value) {
+                                      Get.back();
+
+                                      print('here');
+                                      //setState(() {});
+                                    });
                                   },
                                   avatar: const Icon(
                                     Icons.check,
@@ -1049,8 +1077,13 @@ class CurrentLoanApplications extends StatelessWidget {
                                 ActionChip(
                                   backgroundColor: Colors.red,
                                   onPressed: () {
-                                    Server().declineLoanService(
-                                        currentApplications[index]['id']);
+                                    Server()
+                                        .declineLoanService(widget
+                                            .currentApplications[index]['id'])
+                                        .then((value) {
+                                      setState(() {});
+                                    });
+                                    ;
                                   },
                                   avatar: const Icon(
                                     Icons.cancel_rounded,
@@ -1081,8 +1114,11 @@ class CurrentLoanApplications extends StatelessWidget {
 
 class DefaulterSection extends StatelessWidget {
   const DefaulterSection({
+    required this.defaulter,
     Key? key,
   }) : super(key: key);
+
+  final List defaulter;
 
   @override
   Widget build(BuildContext context) {
@@ -1111,6 +1147,7 @@ class DefaulterSection extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) => MoreDetails(
                               title: 'Defaulter Section',
+data: defaulter
                             )));
               },
               label: Text(
@@ -1128,11 +1165,11 @@ class DefaulterSection extends StatelessWidget {
           ],
         ),
         SizedBox(
-          height: 210.h,
+          height: 180.h,
           child: Swiper(
             itemBuilder: (BuildContext context, int index) {
               return Container(
-                height: 200.0,
+                height: 150.0,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(22.r),
                     color: Colors.white),
@@ -1144,6 +1181,25 @@ class DefaulterSection extends StatelessWidget {
                       Row(
                         children: [
                           Text(
+                            'Name:',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Poppins',
+                                fontSize: 17.sp),
+                          ),
+                          const Spacer(),
+                          Text(defaulter[index]['full_names'],
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'Poppins',
+                                  color: Colors.black54,
+                                  fontSize: 17.sp)),
+                        ],
+                      ),
+
+                      Row(
+                        children: [
+                          Text(
                             'ID:',
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
@@ -1151,7 +1207,7 @@ class DefaulterSection extends StatelessWidget {
                                 fontSize: 17.sp),
                           ),
                           const Spacer(),
-                          Text('CMDNGJDN843EFD',
+                          Text(defaulter[index]['nin'],
                               style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   fontFamily: 'Poppins',
@@ -1159,22 +1215,7 @@ class DefaulterSection extends StatelessWidget {
                                   fontSize: 17.sp)),
                         ],
                       ),
-                      Row(
-                        children: [
-                          Text('Referral:',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: 'Poppins',
-                                  fontSize: 17.sp)),
-                          const Spacer(),
-                          Text('NONE',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: 'Poppins',
-                                  color: Colors.black54,
-                                  fontSize: 17.sp)),
-                        ],
-                      ),
+
                       Row(
                         children: [
                           Text('Amount:',
@@ -1183,7 +1224,7 @@ class DefaulterSection extends StatelessWidget {
                                   fontFamily: 'Poppins',
                                   fontSize: 17.sp)),
                           const Spacer(),
-                          Text('CMDNGJDN843EFD',
+                          Text(defaulter[index]['outstanding_balance'],
                               style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   fontFamily: 'Poppins',
@@ -1193,13 +1234,13 @@ class DefaulterSection extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Text('Remittance - Weekly:',
+                          Text('Remittance:',
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontFamily: 'Poppins',
                                   fontSize: 17.sp)),
                           const Spacer(),
-                          Text('Mobile Money',
+                          Text(defaulter[index]['payment_mode'],
                               style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   fontFamily: 'Poppins',
@@ -1213,8 +1254,8 @@ class DefaulterSection extends StatelessWidget {
                           ActionChip(
                             backgroundColor: Colors.blue,
                             onPressed: () {
-                              // launchUrl('url',
-                              // );
+                              _makePhoneCall(defaulter[index]['phone_number']
+                              );
                             },
                             avatar: const Icon(
                               Icons.phone,
@@ -1234,12 +1275,20 @@ class DefaulterSection extends StatelessWidget {
                 ),
               );
             },
-            itemCount: 10,
+            itemCount: defaulter.length,
             viewportFraction: 0.8,
             scale: 0.9,
           ),
         ),
       ],
     );
+  }
+
+    Future<void> _makePhoneCall(String phoneNumber) async {
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phoneNumber,
+    );
+    await launchUrl(launchUri);
   }
 }
