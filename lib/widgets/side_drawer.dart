@@ -1,9 +1,13 @@
+import 'package:admin_banja/controllers/dashboard_controller.dart';
 import 'package:admin_banja/controllers/homePageController.dart';
+import 'package:admin_banja/screens/app_data.dart';
 import 'package:admin_banja/screens/auth/register_page.dart';
 import 'package:admin_banja/screens/dash.dart';
 import 'package:admin_banja/screens/paymets.dart';
+import 'package:admin_banja/screens/public_area.dart';
 import 'package:admin_banja/screens/records.dart';
 import 'package:admin_banja/screens/slips.dart';
+import 'package:admin_banja/screens/user_and_roles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -89,22 +93,22 @@ class SliderView extends StatelessWidget {
                 title: 'Payments',
                 iconData: 'Wallet',
                 screen: const PaymentsPage()),
-            _SliderMenuItem(
-                title: 'Referrals',
-                iconData: 'Discount',
-                screen: const Slips()),
+            // _SliderMenuItem(
+            //     title: 'Referrals',
+            //     iconData: 'Discount',
+            //     screen: const Slips()),
             _SliderMenuItem(
                 title: 'App Data',
                 iconData: 'Paper Download',
-                screen: const Slips()),
+                screen: const AppData()),
             _SliderMenuItem(
-                title: 'Users & Roles',
+                title: 'User Management',
                 iconData: 'Chart',
-                screen: const Slips()),
+                screen: const UserRoles()),
             _SliderMenuItem(
-                title: 'Admin Profile',
+                title: 'Public Area',
                 iconData: 'Chart',
-                screen: const Slips()),
+                screen: const PublicArea()),
             const Spacer(),
             const Spacer(),
             _SliderMenuItem(
@@ -136,7 +140,8 @@ class _SliderMenuItem extends StatelessWidget {
       required this.iconData,
       this.screen})
       : super(key: key);
-  HomePageController homeController = Get.find();
+
+  DashboardController dashController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -156,7 +161,7 @@ class _SliderMenuItem extends StatelessWidget {
           }
 
           if (canPop) {
-            homeController.sliderKey.currentState?.closeSlider();
+            dashController.sliderKey.currentState?.closeSlider();
           } else {
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => screen!));
