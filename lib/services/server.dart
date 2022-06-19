@@ -12,22 +12,18 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ui';
 import 'package:admin_banja/constants/strings.dart';
 import 'package:admin_banja/controllers/loanDetailControllers.dart';
 import 'package:admin_banja/models/loan_application_details_model.dart';
 import 'package:admin_banja/screens/dash.dart';
-import 'package:admin_banja/services/local_db.dart';
 import 'package:admin_banja/utils/customOverlay.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+
+import '../models/loan_category.dart';
 
 enum Category {
   loanCategories,
@@ -230,7 +226,53 @@ class Server extends GetxController {
     return response;
   }
 
-  Future acceptLoanService(var loanId) async {
+  ///synchronize loan application record with the server
+  static Future createLoanCategory(
+      LoanCategoryModel loanCategoryDetails) async {
+    CustomOverlay.showLoaderOverlay(duration: 6);
+
+    var request = http.MultipartRequest('POST', postLoanType)
+      ..headers.addAll(
+        {"Authorization": 'Bearer $accessToken'},
+      )
+      ..fields.addAll(
+        {
+          'loan_type': loanCategoryDetails.loanType!,
+          'interest_type': loanCategoryDetails.interestType!,
+          'interest_rate': loanCategoryDetails.interestRate.toString(),
+          'term': loanCategoryDetails.term.toString(),
+          'term_period': loanCategoryDetails.termPeriod.toString(),
+          'minimum_amount': loanCategoryDetails.minAmount.toString(),
+          'maximum_amount': loanCategoryDetails.maxAmount.toString(),
+          'abbreviation': loanCategoryDetails.abbreviation!,
+          'description': loanCategoryDetails.description!,
+        },
+      );
+
+    ///clean up data before sending it
+    // ignore: avoid_single_cascade_in_expression_statements
+    request..fields.removeWhere((key, value) => value == '');
+
+    var response = await request.send();
+
+    final message = await http.Response.fromStream(response);
+    debugPrint(message.body);
+
+    if (json.decode(message.body)['success'] == true) {
+      CustomOverlay.showToast(
+          'Loan category successful!', Colors.green, Colors.white);
+      Get.back();
+    } else {
+      CustomOverlay.showToast('Something went wrong', Colors.red, Colors.white);
+      Get.back();
+    }
+
+    HapticFeedback.selectionClick();
+
+    return response;
+  }
+
+  Future acceptLoanService(BuildContext context, var loanId) async {
     CustomOverlay.showLoaderOverlay(duration: 6);
 
     try {
@@ -249,12 +291,98 @@ class Server extends GetxController {
       final resBody = await res.stream.bytesToString();
 
       if (res.statusCode >= 200 && res.statusCode < 300) {
+        Get.back();
         if (json.decode(resBody)['success'] == true) {
           CustomOverlay.showToast(
               'Loan approved Successfully', Colors.green, Colors.white);
         } else {
           CustomOverlay.showToast(
               json.decode(resBody)['message'], Colors.red, Colors.white);
+        }
+      } else {
+        Get.back();
+        print(res.reasonPhrase);
+      }
+
+      HapticFeedback.selectionClick();
+    } catch (e) {
+      CustomOverlay.showToast('Something went wrong', Colors.red, Colors.white);
+      Get.back();
+    }
+  }
+
+  Future deleteLoanCategory(var loanCategoryId) async {
+    CustomOverlay.showLoaderOverlay(duration: 6);
+
+    try {
+      var headersList = {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json'
+      };
+      var url = Uri.parse('$baseUrl/loan/remove_loan_category/$loanCategoryId');
+
+      var req = http.Request('DELETE', url);
+      req.headers.addAll(headersList);
+
+      var res = await req.send();
+      final resBody = await res.stream.bytesToString();
+
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        if (json.decode(resBody)['success'] == true) {
+          CustomOverlay.showToast(
+              'Loan Categroy deleted Successfully', Colors.green, Colors.white);
+        } else {
+          CustomOverlay.showToast(
+              json.decode(resBody)['message'], Colors.red, Colors.white);
+        }
+      } else {
+        print(res.reasonPhrase);
+      }
+
+      HapticFeedback.selectionClick();
+    } catch (e) {
+      CustomOverlay.showToast('Something went wrong', Colors.red, Colors.white);
+    }
+  }
+
+  static Future updateLoanCategory(
+      LoanCategoryModel loanCategoryDetails, var loanCategoryId) async {
+    CustomOverlay.showLoaderOverlay(duration: 6);
+
+    try {
+      var headersList = {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json'
+      };
+      var url = Uri.parse('$baseUrl/loan/edit_loan_categories/$loanCategoryId');
+
+      var body = {
+        'loan_type': loanCategoryDetails.loanType!,
+        'interest_type': loanCategoryDetails.interestType!,
+        'interest_rate': loanCategoryDetails.interestRate.toString(),
+        'term': loanCategoryDetails.term.toString(),
+        'term_period': loanCategoryDetails.termPeriod.toString(),
+        'minimum_amount': loanCategoryDetails.minAmount.toString(),
+        'maximum_amount': loanCategoryDetails.maxAmount.toString(),
+        'abbreviation': loanCategoryDetails.abbreviation!,
+        'description': loanCategoryDetails.description!,
+      };
+      var req = http.Request('PUT', url);
+      req.headers.addAll(headersList);
+      req.body = json.encode(body);
+
+      var res = await req.send();
+      final resBody = await res.stream.bytesToString();
+
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        if (json.decode(resBody)['success'] == true) {
+          CustomOverlay.showToast(
+              'Loan Category updated Successfully', Colors.green, Colors.white);
+          Get.back();
+        } else {
+          CustomOverlay.showToast(
+              json.decode(resBody)['message'], Colors.red, Colors.white);
+          Get.back();
         }
       } else {
         print(res.reasonPhrase);
@@ -347,12 +475,40 @@ class Server extends GetxController {
     return response;
   }
 
+  static Future fetchAllPayments() async {
+    HapticFeedback.selectionClick();
 
+    var request = http.MultipartRequest('GET', getAllPayments)
+      ..headers.addAll({"Authorization": 'Bearer $accessToken'});
+
+    var response = await request.send();
+    final message = await http.Response.fromStream(response);
+    print(json.decode(message.body));
+    if (json.decode(message.body)['success'] == true) {
+      return json.decode(message.body);
+    }
+    return response;
+  }
+
+  static Future fetchAllLoanCategories() async {
+    HapticFeedback.selectionClick();
+
+    var request = http.MultipartRequest('GET', getAllLoanTypes)
+      ..headers.addAll({"Authorization": 'Bearer $accessToken'});
+
+    var response = await request.send();
+    final message = await http.Response.fromStream(response);
+    print(json.decode(message.body));
+    if (json.decode(message.body)['success'] == true) {
+      return json.decode(message.body);
+    }
+    return response;
+  }
 
   static dashUpdate(var obj) async {
     {
       GetStorage().write('dashData', obj);
-      
+
       // preference.setString('dashboardJson', obj);
     }
   }
