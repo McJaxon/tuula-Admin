@@ -542,7 +542,7 @@ class LoanCategory extends GetxController {
                                         keyboardType: TextInputType.number,
                                         decoration: InputDecoration(
                                             hintText:
-                                                'what kind on interest is this ed. Accrual',
+                                                'what kind on interest is this eg. Accrual',
                                             hintStyle:
                                                 TextStyle(fontSize: 17.sp),
                                             contentPadding:
