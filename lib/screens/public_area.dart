@@ -6,11 +6,9 @@ import 'package:admin_banja/services/server.dart';
 import 'package:admin_banja/widgets/loading_indicator.dart';
 import 'package:admin_banja/widgets/network_error.dart';
 import 'package:admin_banja/widgets/no_record_error.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class PublicArea extends StatefulWidget {
@@ -23,15 +21,20 @@ class PublicArea extends StatefulWidget {
 class _PublicAreaState extends State<PublicArea> with TickerProviderStateMixin {
   var dashController = Get.put(DashboardController());
   var loanCategoryController = Get.put(LoanCategory());
+    late TabController tabController;
+  PageController controller = PageController();
+  int tabCurrentPage = 0;
+  var currentIndex = 0;
+  PageController tabPageController = PageController();
 
   @override
   void initState() {
-    dashController.tabController = TabController(length: 4, vsync: this);
-    dashController.controller.addListener(() {
-      if (dashController.controller.page == 0) {
-        dashController.currentIndex.value = 0;
+    tabController = TabController(length: 3, vsync: this);
+    controller.addListener(() {
+      if (controller.page == 0) {
+        currentIndex = 0;
       } else {
-        dashController.currentIndex.value = 1;
+        currentIndex = 1;
       }
     });
     super.initState();
@@ -47,7 +50,7 @@ class _PublicAreaState extends State<PublicArea> with TickerProviderStateMixin {
             children: [
               FutureBuilder(
                   future: Future.wait(
-                      [Server.fetchAllLoanCategories(), Server().fetchLoans()]),
+                      [Server.fetchAllLoanCategories(), Server.fetchLoans()]),
                   builder: (context, AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const LoadingData();
@@ -58,9 +61,9 @@ class _PublicAreaState extends State<PublicArea> with TickerProviderStateMixin {
                     } else {
                       return Stack(children: [
                         PageView(
-                          controller: dashController.tabPageController,
+                          controller: tabPageController,
                           onPageChanged: (page) {
-                            dashController.tabController
+                            tabController
                                 .animateTo(page.toInt());
                           },
                           children: [
@@ -437,26 +440,16 @@ class _PublicAreaState extends State<PublicArea> with TickerProviderStateMixin {
                       width: double.infinity,
                       color: Colors.white12,
                       child: TabBar(
-                        controller: dashController.tabController,
+                        isScrollable: true,
+                        controller: tabController,
                         onTap: (int page) {
-                          dashController.tabCurrentPage = page;
-
-                          dashController.tabPageController.animateToPage(
-                              dashController.tabCurrentPage,
+                          tabCurrentPage = page;
+                          tabPageController.animateToPage(
+                              tabCurrentPage,
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.easeIn);
                         },
                         tabs: const [
-                          Tab(
-                            child: Text(
-                              'FAQs',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: 'Poppins',
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ),
                           Tab(
                             child: Text(
                               'Terms of Use',
@@ -467,7 +460,7 @@ class _PublicAreaState extends State<PublicArea> with TickerProviderStateMixin {
                                   fontWeight: FontWeight.w500),
                             ),
                           ),
-                            Tab(
+                          Tab(
                             child: Text(
                               'Privacy Policy',
                               style: TextStyle(

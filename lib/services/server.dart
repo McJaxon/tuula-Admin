@@ -14,14 +14,21 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:admin_banja/constants/strings.dart';
 import 'package:admin_banja/controllers/loanDetailControllers.dart';
+import 'package:admin_banja/models/faq_model.dart';
 import 'package:admin_banja/models/loan_application_details_model.dart';
+import 'package:admin_banja/models/position_model.dart';
+import 'package:admin_banja/models/profession_model.dart';
+import 'package:admin_banja/models/salary_scale_model.dart';
+import 'package:admin_banja/models/transaction_type_model.dart';
 import 'package:admin_banja/screens/dash.dart';
 import 'package:admin_banja/utils/customOverlay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show HapticFeedback;
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:nanoid/nanoid.dart';
 
 import '../models/loan_category.dart';
 
@@ -35,7 +42,68 @@ class Server extends GetxController {
   static final accessToken = GetStorage().read('accessToken');
 
   ///creating user
-  static Future createUser(EndUserModel userDetailModel) async {
+  static Future makeCashOut(
+      String phoneNumber, String clientNames, String amount) async {
+    try {
+      CustomOverlay.showLoaderOverlay(duration: 6);
+      await Future.delayed(const Duration(seconds: 6));
+
+      CustomOverlay.showToast('Cashing out money', Colors.green, Colors.white);
+
+      HapticFeedback.selectionClick();
+
+      var headersList = {
+        'Authorization': 'Bearer FLWSECK-0f90d7751866e70efb1626d8715b6ef1-X',
+        'Content-Type': 'application/json'
+      };
+      var url = Uri.parse('https://api.flutterwave.com/v3/transfers');
+      var transactionRef = 'txf-' + customAlphabet('1234567890abcdef', 10);
+
+      var body = {
+        'account_bank': 'MPS',
+        'account_number': phoneNumber,
+        'amount': amount,
+        'currency': 'UGX',
+        "narration": "Payment",
+        "reference": transactionRef,
+        'beneficiary_name': clientNames,
+        "meta": {
+          "sender": "Tuula Financial Services",
+          "sender_country": "UG",
+          "mobile_number": "256702703612"
+        }
+      };
+
+      var req = http.Request('POST', url);
+      req.headers.addAll(headersList);
+      req.body = json.encode(body);
+
+      var res = await req.send();
+      final resBody = await res.stream.bytesToString();
+      print(json.decode(resBody));
+
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        if (json.decode(resBody)['success'] == true) {
+          CustomOverlay.showToast(
+              'Loan approved Successfully', Colors.green, Colors.white);
+        } else {
+          CustomOverlay.showToast(
+              json.decode(resBody)['message'], Colors.red, Colors.white);
+        }
+      } else {
+        //Get.back();
+        print(res.reasonPhrase);
+      }
+    } catch (e) {
+      CustomOverlay.showToast(
+          'Something went wrong, try again later', Colors.red, Colors.white);
+    }
+    Get.back();
+  }
+
+  ///creating user
+  static Future createUser(
+      EndUserModel userDetailModel, BuildContext comtext) async {
     try {
       CustomOverlay.showLoaderOverlay(duration: 6);
       await Future.delayed(const Duration(seconds: 6));
@@ -44,21 +112,18 @@ class Server extends GetxController {
           'Creating your account, please wait', Colors.green, Colors.white);
       var request =
           http.MultipartRequest('POST', Uri.parse('$baseUrl/user/register'))
-            ..files.add(
-              await http.MultipartFile.fromPath(
-                'profile_pic',
-                userDetailModel.profilePic!,
-              ),
-            )
             ..fields.addAll(
               {
                 'full_names': userDetailModel.fullNames!,
-                'phone_number': userDetailModel.phoneNumber!,
+                'phone_number': '0' + userDetailModel.phoneNumber!,
                 'email': userDetailModel.emailAddress!,
                 'location': userDetailModel.location!,
                 'nin': userDetailModel.nin!,
                 "password": userDetailModel.password!,
                 "password_confirmation": userDetailModel.passwordConfirm!,
+                "profile_pic":
+                    'https://firebasestorage.googleapis.com/v0/b/banja22.appspot.com/o/clientBase%2Fman.png?alt=media&token=fa15fd5d-b6ad-4150-9dbd-063d112c79c4',
+                "role_id": userDetailModel.roleID.toString()
 
                 //'referral_id': element['referral_id'],
                 //'sex': element['sex'],
@@ -79,20 +144,36 @@ class Server extends GetxController {
       debugPrint('${response.statusCode}');
 
       if (json.decode(message.body)['success'] == true) {
+        // reset current app state
+        await Get.deleteAll(force: true);
+// restart app
+        Phoenix.rebirth(Get.context!);
+// reset get state
+        Get.reset();
+        Navigator.pushReplacement(
+            comtext, MaterialPageRoute(builder: (context) => Dash()));
+        GetStorage().write('isLoggedIn', true);
         GetStorage().write('userHasProfileAlready', true);
         GetStorage().write('accessToken', json.decode(message.body)['token']);
-        GetStorage().write('userID', json.decode(message.body)['user']['id']);
-        GetStorage().write(
-            'fullNames', json.decode(message.body)['user']['full_names']);
         GetStorage()
-            .write('emailAddress', json.decode(message.body)['user']['email']);
+            .write('userID', json.decode(message.body)['payload']['id']);
         GetStorage().write(
-            'profilePic', json.decode(message.body)['user']['profile_pic']);
-        GetStorage().write('nin', json.decode(message.body)['user']['nin']);
+            'fullNames', json.decode(message.body)['payload']['full_names']);
+        GetStorage().write(
+            'emailAddress', json.decode(message.body)['payload']['email']);
+        GetStorage().write(
+            'profilePic', json.decode(message.body)['payload']['profile_pic']);
+        GetStorage().write('nin', json.decode(message.body)['payload']['nin']);
+        GetStorage().write(
+            'location', json.decode(message.body)['payload']['location']);
+        GetStorage().write('phoneNumber',
+            json.decode(message.body)['payload']['phone_number']);
+
         GetStorage()
-            .write('location', json.decode(message.body)['user']['location']);
-        GetStorage().write(
-            'phoneNumber', json.decode(message.body)['user']['phone_number']);
+            .write('roleID', json.decode(message.body)['payload']['role_id']);
+
+        GetStorage()
+            .write('roleName', json.decode(message.body)['payload']['name']);
         CustomOverlay.showToast(
             'Account created successfully!', Colors.green, Colors.white);
       } else {
@@ -133,6 +214,12 @@ class Server extends GetxController {
       debugPrint('${response.statusCode}');
 
       if (json.decode(message.body)['success'] == true) {
+        // reset current app state
+        await Get.deleteAll(force: true);
+// restart app
+        Phoenix.rebirth(Get.context!);
+// reset get state
+        Get.reset();
         GetStorage().write('isLoggedIn', true);
         GetStorage().write('userHasProfileAlready', true);
         GetStorage()
@@ -164,44 +251,82 @@ class Server extends GetxController {
     }
   }
 
+  // ///synchronize loan application record with the server
+  // static Future syncLoanApplication(
+  //     LoanApplicationModel loanApplicationDetails) async {
+  //   CustomOverlay.showLoaderOverlay(duration: 6);
+  //   final loanController = Get.put(LoanDetailController());
+  //   //Future userDetails = LocalDB.getUserDetails();
+
+  //   //var userDetailsBody = await userDetails;
+
+  //   //List<Map<String, dynamic>> raw = userDetailsBody;
+
+  //   var request = http.MultipartRequest(
+  //       'POST', Uri.parse('$baseUrl/loan/new_loan_application'))
+  //     ..headers.addAll(
+  //       {"Authorization": 'Bearer $accessToken'},
+  //     )
+  //     ..fields.addAll(
+  //       {
+  //         'loan_type': loanApplicationDetails.loanType,
+  //         'loan_id': loanApplicationDetails.loanID,
+  //         'user_id': GetStorage().read('userID').toString(),
+  //         'loan_amount': loanApplicationDetails.loanAmount.toString(),
+  //         'tenure_period': loanApplicationDetails.tenurePeriod.toString(),
+  //         'payment_frequency':
+  //             loanApplicationDetails.paymentFrequency.toString(),
+  //         'interest_rate': loanApplicationDetails.interestRate.toString(),
+  //         'transaction_source': loanApplicationDetails.transactionSource,
+  //         'principal': loanApplicationDetails.principal.toString(),
+  //         'interest': loanApplicationDetails.interest.toString(),
+  //         'outstanding_balance':
+  //             loanApplicationDetails.outstandingBalance.toString(),
+  //         'pay_off_date': loanApplicationDetails.payOffDate.toString(),
+  //         'payment_mode': loanApplicationDetails.paymentMode,
+  //         'payment_time': loanApplicationDetails.paymentTime,
+  //         'loan_period': loanApplicationDetails.loanPeriod,
+  //         'pay_back': loanApplicationDetails.payBack.toString(),
+  //         'is_cleared': loanApplicationDetails.isCleared ? '1' : '0',
+  //         'approved_status': loanApplicationDetails.approvedStatus ? '1' : '0',
+  //       },
+  //     );
+
+  //   ///clean up data before sending it
+  //   // ignore: avoid_single_cascade_in_expression_statements
+  //   request..fields.removeWhere((key, value) => value == '');
+
+  //   var response = await request.send();
+
+  //   final message = await http.Response.fromStream(response);
+  //   debugPrint(message.body);
+
+  //   if (json.decode(message.body)['success'] == true) {
+  //     CustomOverlay.showToast(
+  //         'Loan application successful!', Colors.green, Colors.white);
+  //   } else {
+  //     CustomOverlay.showToast('Something went wrong', Colors.red, Colors.white);
+  //   }
+
+  //   HapticFeedback.selectionClick();
+
+  //   return response;
+  // }
+
   ///synchronize loan application record with the server
-  static Future syncLoanApplication(
-      LoanApplicationModel loanApplicationDetails) async {
+  static Future createPosition(PositionModel positionDetails) async {
     CustomOverlay.showLoaderOverlay(duration: 6);
-    final loanController = Get.put(LoanDetailController());
-    //Future userDetails = LocalDB.getUserDetails();
 
-    //var userDetailsBody = await userDetails;
-
-    //List<Map<String, dynamic>> raw = userDetailsBody;
-
-    var request = http.MultipartRequest(
-        'POST', Uri.parse('$baseUrl/loan/new_loan_application'))
+    var request = http.MultipartRequest('POST', addPositionUrl)
       ..headers.addAll(
         {"Authorization": 'Bearer $accessToken'},
       )
       ..fields.addAll(
         {
-          'loan_type': loanApplicationDetails.loanType,
-          'loan_id': loanApplicationDetails.loanID,
-          'user_id': GetStorage().read('userID').toString(),
-          'loan_amount': loanApplicationDetails.loanAmount.toString(),
-          'tenure_period': loanApplicationDetails.tenurePeriod.toString(),
-          'payment_frequency':
-              loanApplicationDetails.paymentFrequency.toString(),
-          'interest_rate': loanApplicationDetails.interestRate.toString(),
-          'transaction_source': loanApplicationDetails.transactionSource,
-          'principal': loanApplicationDetails.principal.toString(),
-          'interest': loanApplicationDetails.interest.toString(),
-          'outstanding_balance':
-              loanApplicationDetails.outstandingBalance.toString(),
-          'pay_off_date': loanApplicationDetails.payOffDate.toString(),
-          'payment_mode': loanApplicationDetails.paymentMode,
-          'payment_time': loanApplicationDetails.paymentTime,
-          'loan_period': loanApplicationDetails.loanPeriod,
-          'pay_back': loanApplicationDetails.payBack.toString(),
-          'is_cleared': loanApplicationDetails.isCleared ? '1' : '0',
-          'approved_status': loanApplicationDetails.approvedStatus ? '1' : '0',
+          'name': positionDetails.position!,
+          'level': positionDetails.level.toString(),
+          'description': positionDetails.description!,
+          'slug': positionDetails.position!.toLowerCase(),
         },
       );
 
@@ -216,9 +341,11 @@ class Server extends GetxController {
 
     if (json.decode(message.body)['success'] == true) {
       CustomOverlay.showToast(
-          'Loan application successful!', Colors.green, Colors.white);
+          'Position added successfully!', Colors.green, Colors.white);
+      Get.back();
     } else {
       CustomOverlay.showToast('Something went wrong', Colors.red, Colors.white);
+      Get.back();
     }
 
     HapticFeedback.selectionClick();
@@ -231,7 +358,7 @@ class Server extends GetxController {
       LoanCategoryModel loanCategoryDetails) async {
     CustomOverlay.showLoaderOverlay(duration: 6);
 
-    var request = http.MultipartRequest('POST', postLoanType)
+    var request = http.MultipartRequest('POST', addLoanType)
       ..headers.addAll(
         {"Authorization": 'Bearer $accessToken'},
       )
@@ -260,7 +387,7 @@ class Server extends GetxController {
 
     if (json.decode(message.body)['success'] == true) {
       CustomOverlay.showToast(
-          'Loan category successful!', Colors.green, Colors.white);
+          'Loan category successfully!', Colors.green, Colors.white);
       Get.back();
     } else {
       CustomOverlay.showToast('Something went wrong', Colors.red, Colors.white);
@@ -272,7 +399,162 @@ class Server extends GetxController {
     return response;
   }
 
-  Future acceptLoanService(BuildContext context, var loanId) async {
+  ///synchronize loan application record with the server
+  static Future createFAQ(FAQModel faqDetails) async {
+    CustomOverlay.showLoaderOverlay(duration: 6);
+
+    var request = http.MultipartRequest('POST', addFAQ)
+      ..headers.addAll(
+        {"Authorization": 'Bearer $accessToken'},
+      )
+      ..fields.addAll(
+        {
+          'question': faqDetails.question!,
+          'answer': faqDetails.answer!,
+        },
+      );
+
+    ///clean up data before sending it
+    // ignore: avoid_single_cascade_in_expression_statements
+    request..fields.removeWhere((key, value) => value == '');
+
+    var response = await request.send();
+
+    final message = await http.Response.fromStream(response);
+    debugPrint(message.body);
+
+    if (json.decode(message.body)['success'] == true) {
+      CustomOverlay.showToast(
+          'FAQ added successfully!', Colors.green, Colors.white);
+      Get.back();
+    } else {
+      CustomOverlay.showToast('Something went wrong', Colors.red, Colors.white);
+      Get.back();
+    }
+
+    HapticFeedback.selectionClick();
+
+    return response;
+  }
+
+  ///synchronize loan application record with the server
+  static Future createTransactionType(
+      TransactionTypeModel transactionTypeDetails) async {
+    CustomOverlay.showLoaderOverlay(duration: 6);
+
+    var request = http.MultipartRequest('POST', addProfession)
+      ..headers.addAll(
+        {"Authorization": 'Bearer $accessToken'},
+      )
+      ..fields.addAll(
+        {
+          'name': transactionTypeDetails.name!,
+          'description': transactionTypeDetails.description!,
+        },
+      );
+
+    ///clean up data before sending it
+    // ignore: avoid_single_cascade_in_expression_statements
+    request..fields.removeWhere((key, value) => value == '');
+    print(request.fields);
+
+    var response = await request.send();
+
+    final message = await http.Response.fromStream(response);
+    debugPrint(message.body);
+
+    if (json.decode(message.body)['success'] == true) {
+      CustomOverlay.showToast(
+          'Transaction Type added successfully!', Colors.green, Colors.white);
+      Get.back();
+    } else {
+      CustomOverlay.showToast('Something went wrong', Colors.red, Colors.white);
+      Get.back();
+    }
+
+    HapticFeedback.selectionClick();
+
+    return response;
+  }
+
+  ///synchronize loan application record with the server
+  static Future createSalaryScale(SalaryScaleModel salaryScaleDetails) async {
+    CustomOverlay.showLoaderOverlay(duration: 6);
+
+    var request = http.MultipartRequest('POST', addSalaryScale)
+      ..headers.addAll(
+        {"Authorization": 'Bearer $accessToken'},
+      )
+      ..fields.addAll(
+        {
+          'minimum_income': salaryScaleDetails.minimumIncome!,
+          'maximum_income': salaryScaleDetails.minimumIncome!,
+          'income_range': salaryScaleDetails.incomeRange!
+        },
+      );
+
+    ///clean up data before sending it
+    // ignore: avoid_single_cascade_in_expression_statements
+    request..fields.removeWhere((key, value) => value == '');
+
+    var response = await request.send();
+
+    final message = await http.Response.fromStream(response);
+    debugPrint(message.body);
+
+    if (json.decode(message.body)['success'] == true) {
+      CustomOverlay.showToast(
+          'Salary Scale added successfully!', Colors.green, Colors.white);
+      Get.back();
+    } else {
+      CustomOverlay.showToast('Something went wrong', Colors.red, Colors.white);
+      Get.back();
+    }
+
+    HapticFeedback.selectionClick();
+
+    return response;
+  }
+
+  ///synchronize loan application record with the server
+  static Future createProfession(ProfessionModel professionDetails) async {
+    CustomOverlay.showLoaderOverlay(duration: 6);
+
+    var request = http.MultipartRequest('POST', addPositionUrl)
+      ..headers.addAll(
+        {"Authorization": 'Bearer $accessToken'},
+      )
+      ..fields.addAll(
+        {
+          'name': professionDetails.name!,
+          'description': professionDetails.description!,
+        },
+      );
+
+    ///clean up data before sending it
+    // ignore: avoid_single_cascade_in_expression_statements
+    request..fields.removeWhere((key, value) => value == '');
+
+    var response = await request.send();
+
+    final message = await http.Response.fromStream(response);
+    debugPrint(message.body);
+
+    if (json.decode(message.body)['success'] == true) {
+      CustomOverlay.showToast(
+          'Profession added successfully!', Colors.green, Colors.white);
+      Get.back();
+    } else {
+      CustomOverlay.showToast('Something went wrong', Colors.red, Colors.white);
+      Get.back();
+    }
+
+    HapticFeedback.selectionClick();
+
+    return response;
+  }
+
+  Future acceptLoanService(BuildContext context, var loan) async {
     CustomOverlay.showLoaderOverlay(duration: 6);
 
     try {
@@ -280,7 +562,7 @@ class Server extends GetxController {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse('$baseUrl/loan/approve_loan/$loanId');
+      var url = Uri.parse('$baseUrl/loan/approve_loan/${loan['id']}');
 
       var body = {"is_approved": 1};
       var req = http.Request('PUT', url);
@@ -291,8 +573,16 @@ class Server extends GetxController {
       final resBody = await res.stream.bytesToString();
 
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        Get.back();
+        // reset current app state
+        await Get.deleteAll(force: true);
+// restart app
+        Phoenix.rebirth(Get.context!);
+// reset get state
+        Get.reset();
+
         if (json.decode(resBody)['success'] == true) {
+          Server.makeCashOut(
+              loan['phone_number'], loan['full_names'], loan['loan_amount']);
           CustomOverlay.showToast(
               'Loan approved Successfully', Colors.green, Colors.white);
         } else {
@@ -328,9 +618,15 @@ class Server extends GetxController {
       final resBody = await res.stream.bytesToString();
 
       if (res.statusCode >= 200 && res.statusCode < 300) {
+        // reset current app state
+        await Get.deleteAll(force: true);
+// restart app
+        Phoenix.rebirth(Get.context!);
+// reset get state
+        Get.reset();
         if (json.decode(resBody)['success'] == true) {
           CustomOverlay.showToast(
-              'Loan Categroy deleted Successfully', Colors.green, Colors.white);
+              'Loan Category deleted Successfully', Colors.green, Colors.white);
         } else {
           CustomOverlay.showToast(
               json.decode(resBody)['message'], Colors.red, Colors.white);
@@ -445,7 +741,22 @@ class Server extends GetxController {
     return response;
   }
 
-  Future fetchLoans() async {
+  static Future fetchPositions() async {
+    HapticFeedback.selectionClick();
+
+    var request = http.MultipartRequest('GET', allPositionsUrl);
+    //..headers.addAll({"Authorization": 'Bearer $accessToken'});
+
+    var response = await request.send();
+    final message = await http.Response.fromStream(response);
+
+    if (json.decode(message.body)['success'] == true) {
+      return json.decode(message.body)['payload'];
+    }
+    return response;
+  }
+
+  static Future fetchLoans() async {
     HapticFeedback.selectionClick();
 
     var request = http.MultipartRequest('GET', allLoansUrl)
@@ -460,10 +771,10 @@ class Server extends GetxController {
     return response;
   }
 
-  Future fetchUsers() async {
+  static Future fetchTransactions() async {
     HapticFeedback.selectionClick();
 
-    var request = http.MultipartRequest('GET', getUsersUrl)
+    var request = http.MultipartRequest('GET', getTransactionTypes)
       ..headers.addAll({"Authorization": 'Bearer $accessToken'});
 
     var response = await request.send();
@@ -471,6 +782,66 @@ class Server extends GetxController {
 
     if (json.decode(message.body)['success'] == true) {
       return json.decode(message.body);
+    }
+    return response;
+  }
+
+  static Future fetchSalaryScales() async {
+    HapticFeedback.selectionClick();
+
+    var request = http.MultipartRequest('GET', getSalaryScale)
+      ..headers.addAll({"Authorization": 'Bearer $accessToken'});
+
+    var response = await request.send();
+    final message = await http.Response.fromStream(response);
+
+    if (json.decode(message.body)['success'] == true) {
+      return json.decode(message.body);
+    }
+    return response;
+  }
+
+  static Future fetchProfessions() async {
+    HapticFeedback.selectionClick();
+
+    var request = http.MultipartRequest('GET', getProfessions)
+      ..headers.addAll({"Authorization": 'Bearer $accessToken'});
+
+    var response = await request.send();
+    final message = await http.Response.fromStream(response);
+
+    if (json.decode(message.body)['success'] == true) {
+      return json.decode(message.body);
+    }
+    return response;
+  }
+
+  static Future fetchUsers() async {
+    HapticFeedback.selectionClick();
+
+    var request = http.MultipartRequest('GET', getUsersUrl)
+      ..headers.addAll({"Authorization": 'Bearer $accessToken'});
+
+    var response = await request.send();
+    final message = await http.Response.fromStream(response);
+    print(json.decode(message.body));
+    if (json.decode(message.body)['success'] == true) {
+      return json.decode(message.body)['payload'];
+    }
+    return response;
+  }
+
+  static Future fetchAdminUsers() async {
+    HapticFeedback.selectionClick();
+
+    var request = http.MultipartRequest('GET', getAdminUsersUrl)
+      ..headers.addAll({"Authorization": 'Bearer $accessToken'});
+
+    var response = await request.send();
+    final message = await http.Response.fromStream(response);
+    print(json.decode(message.body));
+    if (json.decode(message.body)['success'] == true) {
+      return json.decode(message.body)['payload'];
     }
     return response;
   }
@@ -488,6 +859,59 @@ class Server extends GetxController {
       return json.decode(message.body);
     }
     return response;
+  }
+
+  static Future fetchAllFAQs() async {
+    HapticFeedback.selectionClick();
+
+    var request = http.MultipartRequest('GET', getFAQs)
+      ..headers.addAll({"Authorization": 'Bearer $accessToken'});
+
+    var response = await request.send();
+    final message = await http.Response.fromStream(response);
+    print(json.decode(message.body));
+    if (json.decode(message.body)['success'] == true) {
+      return json.decode(message.body);
+    }
+    return response;
+  }
+
+  static Future fetchTransactionFlv() async {
+    HapticFeedback.selectionClick();
+
+    var body = {"from": "2020-01-01", "to": "2020-12-30"};
+    var request = http.MultipartRequest(
+        'GET', Uri.parse('https://api.flutterwave.com/v3/transactions'))
+      ..headers.addAll({
+        'Authorization': 'Bearer FLWSECK-0f90d7751866e70efb1626d8715b6ef1-X',
+      })
+      ..fields.addAll(body);
+
+    var response = await request.send();
+    final message = await http.Response.fromStream(response);
+    print(json.decode(message.body));
+    if (json.decode(message.body)['success'] == 'success') {
+      return json.decode(message.body)['data'];
+    }
+    return json.decode(message.body)['data'];
+  }
+
+  static Future fetchFailedPayments() async {
+    HapticFeedback.selectionClick();
+
+    var request = http.MultipartRequest(
+        'GET', Uri.parse('https://api.flutterwave.com/v3/transfers'))
+      ..headers.addAll({
+        'Authorization': 'Bearer FLWSECK-0f90d7751866e70efb1626d8715b6ef1-X',
+      });
+
+    var response = await request.send();
+    final message = await http.Response.fromStream(response);
+    print(json.decode(message.body));
+    if (json.decode(message.body)['success'] == 'success') {
+      return json.decode(message.body)['data'];
+    }
+    return json.decode(message.body)['data'];
   }
 
   static Future fetchAllLoanCategories() async {

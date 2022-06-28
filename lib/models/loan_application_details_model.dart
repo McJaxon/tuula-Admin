@@ -131,6 +131,7 @@ class EndUserModel {
       this.location,
       this.emailAddress,
       this.password,
+      this.roleID,
       this.passwordConfirm,
       this.referralID});
 
@@ -148,6 +149,7 @@ class EndUserModel {
 
   final String? nin, fullNames, emailAddress, location, profilePic, phoneNumber;
   final String? referralID, password, passwordConfirm;
+  final int? roleID;
 
   Map<String, dynamic> toMap() {
     var map = <String, dynamic>{
@@ -155,6 +157,7 @@ class EndUserModel {
       'profile_pic': profilePic,
       'full_names': fullNames,
       'nin': nin,
+      'role_id': roleID,
       'location': location,
       'referral_id': referralID,
       'email_address': emailAddress,

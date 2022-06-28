@@ -221,9 +221,9 @@ class _DashState extends State<Dash> with TickerProviderStateMixin {
                                           currentApplications: snapshot
                                                   .data['payload']
                                               ['pending_loan_applications']),
-                                      DefaulterSection(defaulter: snapshot
-                                                  .data['payload']
-                                              ['pending_loan_applications']),
+                                      DefaulterSection(
+                                          defaulter: snapshot.data['payload']
+                                              ['loan_defaulters']),
                                       SizedBox(
                                         height: 170.h,
                                       ),
@@ -237,8 +237,8 @@ class _DashState extends State<Dash> with TickerProviderStateMixin {
                         children: [
                           FutureBuilder(
                               future: Future.wait([
-                                Server().fetchUsers(),
-                                Server().fetchLoans()
+                                Server.fetchUsers(),
+                                Server.fetchLoans()
                               ]),
                               builder: (context, AsyncSnapshot snapshot) {
                                 if (snapshot.connectionState ==
@@ -262,7 +262,7 @@ class _DashState extends State<Dash> with TickerProviderStateMixin {
                                           padding: EdgeInsets.only(
                                               top: 240.h, bottom: 200.h),
                                           itemCount: snapshot
-                                              .data[0]['payload'].length,
+                                              .data[0].length,
                                           itemBuilder: ((context, index) {
                                             return Padding(
                                               padding:
@@ -292,8 +292,7 @@ class _DashState extends State<Dash> with TickerProviderStateMixin {
                                                               children: [
                                                                 Text(
                                                                   snapshot.data[0]
-                                                                              [
-                                                                              'payload']
+
                                                                           [
                                                                           index]
                                                                       [
@@ -331,7 +330,7 @@ class _DashState extends State<Dash> with TickerProviderStateMixin {
                                                                           10.w,
                                                                     ),
                                                                     Text(
-                                                                      snapshot.data[0]['payload']
+                                                                      snapshot.data[0]
                                                                               [
                                                                               index]
                                                                           [
@@ -356,8 +355,7 @@ class _DashState extends State<Dash> with TickerProviderStateMixin {
                                                                 backgroundImage:
                                                                     NetworkImage(
                                                                   snapshot.data[0]
-                                                                              [
-                                                                              'payload']
+
                                                                           [
                                                                           index]
                                                                       [
@@ -386,8 +384,7 @@ class _DashState extends State<Dash> with TickerProviderStateMixin {
                                                             SizedBox(
                                                                 width: 10.w),
                                                             Text(
-                                                              snapshot.data[0][
-                                                                          'payload']
+                                                              snapshot.data[0]
                                                                       [index]
                                                                   ['location'],
                                                               style: TextStyle(
@@ -424,8 +421,7 @@ class _DashState extends State<Dash> with TickerProviderStateMixin {
                                                             SizedBox(
                                                                 width: 10.w),
                                                             Text(
-                                                              snapshot.data[0][
-                                                                          'payload']
+                                                              snapshot.data[0]
                                                                       [index][
                                                                   'phone_number'],
                                                               style: TextStyle(
@@ -462,8 +458,7 @@ class _DashState extends State<Dash> with TickerProviderStateMixin {
                                                             SizedBox(
                                                                 width: 10.w),
                                                             Text(
-                                                              snapshot.data[0][
-                                                                      'payload']
+                                                              snapshot.data[0]
                                                                   [
                                                                   index]['email'],
                                                               style: TextStyle(
@@ -809,10 +804,11 @@ class _DashState extends State<Dash> with TickerProviderStateMixin {
                           padding: EdgeInsets.only(top: 24.h, right: 10.w),
                           child: Row(children: [
                             IconButton(
-                                icon:const Icon(
+                                icon: const Icon(
                                   Icons.menu,
                                 ),
                                 onPressed: () {
+
                                   dashController.sliderKey.currentState
                                       ?.openSlider();
                                 }),
@@ -928,9 +924,8 @@ class _CurrentLoanApplicationsState extends State<CurrentLoanApplications> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => MoreDetails(
-                              title: 'Current Loan Applications',
-                              data: widget.currentApplications
-                            )));
+                            title: 'Current Loan Applications',
+                            data: widget.currentApplications)));
               },
               label: Text(
                 'See All',
@@ -1054,12 +1049,12 @@ class _CurrentLoanApplicationsState extends State<CurrentLoanApplications> {
                                         .acceptLoanService(
                                             context,
                                             widget.currentApplications[index]
-                                                ['id'])
+                                                )
                                         .then((value) {
                                       Get.back();
 
-                                      print('here');
-                                      //setState(() {});
+
+
                                     });
                                   },
                                   avatar: const Icon(
@@ -1146,9 +1141,7 @@ class DefaulterSection extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) => MoreDetails(
-                              title: 'Defaulter Section',
-data: defaulter
-                            )));
+                            title: 'Defaulter Section', data: defaulter)));
               },
               label: Text(
                 'See All',
@@ -1196,7 +1189,6 @@ data: defaulter
                                   fontSize: 17.sp)),
                         ],
                       ),
-
                       Row(
                         children: [
                           Text(
@@ -1215,7 +1207,6 @@ data: defaulter
                                   fontSize: 17.sp)),
                         ],
                       ),
-
                       Row(
                         children: [
                           Text('Amount:',
@@ -1254,8 +1245,7 @@ data: defaulter
                           ActionChip(
                             backgroundColor: Colors.blue,
                             onPressed: () {
-                              _makePhoneCall(defaulter[index]['phone_number']
-                              );
+                              _makePhoneCall(defaulter[index]['phone_number']);
                             },
                             avatar: const Icon(
                               Icons.phone,
@@ -1284,7 +1274,7 @@ data: defaulter
     );
   }
 
-    Future<void> _makePhoneCall(String phoneNumber) async {
+  Future<void> _makePhoneCall(String phoneNumber) async {
     final Uri launchUri = Uri(
       scheme: 'tel',
       path: phoneNumber,

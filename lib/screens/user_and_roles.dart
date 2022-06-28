@@ -2,15 +2,14 @@ import 'dart:ui';
 
 import 'package:admin_banja/controllers/dashboard_controller.dart';
 import 'package:admin_banja/controllers/loan_category_controller.dart';
+import 'package:admin_banja/controllers/positions_controller.dart';
 import 'package:admin_banja/services/server.dart';
 import 'package:admin_banja/widgets/loading_indicator.dart';
 import 'package:admin_banja/widgets/network_error.dart';
 import 'package:admin_banja/widgets/no_record_error.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 class UserRoles extends StatefulWidget {
@@ -23,15 +22,21 @@ class UserRoles extends StatefulWidget {
 class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
   var dashController = Get.put(DashboardController());
   var loanCategoryController = Get.put(LoanCategory());
+  var positionsController = Get.put(PositionsController());
+    late TabController tabController;
+  PageController controller = PageController();
+  int tabCurrentPage = 0;
+  var currentIndex = 0;
+  PageController tabPageController = PageController();
 
   @override
   void initState() {
-    dashController.tabController = TabController(length: 2, vsync: this);
-    dashController.controller.addListener(() {
-      if (dashController.controller.page == 0) {
-        dashController.currentIndex.value = 0;
+    tabController = TabController(length: 2, vsync: this);
+    controller.addListener(() {
+      if (controller.page == 0) {
+        currentIndex = 0;
       } else {
-        dashController.currentIndex.value = 1;
+        currentIndex = 1;
       }
     });
     super.initState();
@@ -46,8 +51,11 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
           Stack(
             children: [
               FutureBuilder(
-                  future: Future.wait(
-                      [Server.fetchAllLoanCategories(), Server().fetchLoans()]),
+                  future: Future.wait([
+                    Server.fetchAdminUsers(),
+                    Server.fetchLoans(),
+                    Server.fetchPositions()
+                  ]),
                   builder: (context, AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const LoadingData();
@@ -58,9 +66,9 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                     } else {
                       return Stack(children: [
                         PageView(
-                          controller: dashController.tabPageController,
+                          controller: tabPageController,
                           onPageChanged: (page) {
-                            dashController.tabController
+                            tabController
                                 .animateTo(page.toInt());
                           },
                           children: [
@@ -69,7 +77,7 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                                 ListView.builder(
                                   padding: EdgeInsets.only(
                                       top: 240.h, bottom: 200.h),
-                                  itemCount: 1,
+                                  itemCount: snapshot.data[0].length,
                                   itemBuilder: ((context, index) {
                                     return Padding(
                                       padding: const EdgeInsets.all(8.0),
@@ -89,7 +97,9 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                                                     Row(
                                                       children: [
                                                         Text(
-                                                         'System user',
+                                                          snapshot.data[0]
+                                                                  [index]
+                                                              ['full_names'],
                                                           style: TextStyle(
                                                               color: Colors
                                                                   .black87,
@@ -123,7 +133,8 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                                                           width: 10.w,
                                                         ),
                                                         Text(
-                                                       'superadmin@tuulacredit.com',
+                                                          snapshot.data[0]
+                                                              [index]['email'],
                                                           style: TextStyle(
                                                               color:
                                                                   Colors.black,
@@ -155,7 +166,8 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                                                         ),
                                                         SizedBox(width: 10.w),
                                                         Text(
-                                                          'Director',
+                                                            snapshot.data[0]
+                                                              [index]['name'],
                                                           style: TextStyle(
                                                               color:
                                                                   Colors.black,
@@ -171,38 +183,8 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                                                     SizedBox(
                                                       height: 15.h,
                                                     ),
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          'User Group:',
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .black54,
-                                                              fontFamily:
-                                                                  'Poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              fontSize: 18.sp),
-                                                        ),
-                                                        SizedBox(width: 10.w),
-                                                        Text(
-                                                         'Super System Administrator',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontFamily:
-                                                                  'Poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w200,
-                                                              fontSize: 18.sp),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      height: 15.h,
-                                                    ),
+
+
                                                     Row(
                                                       children: [
                                                         Text(
@@ -314,95 +296,177 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                                 ),
                               ],
                             ),
-                            ListView.builder(
-                              padding:
-                                  EdgeInsets.only(top: 240.h, bottom: 200.h),
-                              itemCount: 1,
-                              itemBuilder: ((context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(10.r)),
-                                    child: Padding(
-                                      padding: EdgeInsets.all(26.w),
-                                      child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
+
+                            Stack(
+                              children: [
+                                ListView.builder(
+                                  padding: EdgeInsets.only(
+                                      top: 240.h, bottom: 200.h),
+                                  itemCount: snapshot.data[2].length,
+                                  itemBuilder: ((context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10.r)),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(26.w),
+                                          child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Column(
+                                                Row(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Text(
-                                                      'Director',
-                                                      style: TextStyle(
-                                                          color: Colors.black87,
-                                                          fontFamily: 'Poppins',
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontSize: 20.sp),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 10.h,
-                                                    ),
-                                                    Row(
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Text(
-                                                          'Abbreviation:',
+                                                          snapshot.data[2]
+                                                              [index]['name'],
                                                           style: TextStyle(
                                                               color: Colors
-                                                                  .black54,
+                                                                  .black87,
                                                               fontFamily:
                                                                   'Poppins',
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .w600,
-                                                              fontSize: 16.sp),
+                                                                      .w500,
+                                                              fontSize: 20.sp),
                                                         ),
                                                         SizedBox(
-                                                          width: 10.w,
+                                                          height: 10.h,
                                                         ),
-                                                        Text(
-                                                          'Dir. D&E.',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontFamily:
-                                                                  'Poppins',
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w200,
-                                                              fontSize: 16.sp),
+                                                        Row(
+                                                          children: [
+                                                            Text(
+                                                              'Slug:',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black54,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize:
+                                                                      16.sp),
+                                                            ),
+                                                            SizedBox(
+                                                              width: 10.w,
+                                                            ),
+                                                            Text(
+                                                              snapshot.data[2]
+                                                                      [index]
+                                                                  ['slug'],
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontFamily:
+                                                                      'Poppins',
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w200,
+                                                                  fontSize:
+                                                                      16.sp),
+                                                            ),
+                                                          ],
                                                         ),
                                                       ],
                                                     ),
                                                   ],
                                                 ),
+                                                SizedBox(
+                                                  height: 4.h,
+                                                ),
+                                                Text(
+                                                  snapshot.data[2][index]
+                                                      ['description'],
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontFamily: 'Poppins',
+                                                      fontWeight:
+                                                          FontWeight.w200,
+                                                      fontSize: 18.sp),
+                                                ),
+                                                SizedBox(
+                                                  height: 4.h,
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Text(
+                                                      'Level:',
+                                                      style: TextStyle(
+                                                          color: Colors.black54,
+                                                          fontFamily: 'Poppins',
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontSize: 16.sp),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10.w,
+                                                    ),
+                                                    Text(
+                                                      snapshot.data[2][index]
+                                                              ['level']
+                                                          .toString(),
+                                                      style: TextStyle(
+                                                          color: Colors.black,
+                                                          fontFamily: 'Poppins',
+                                                          fontWeight:
+                                                              FontWeight.w200,
+                                                          fontSize: 16.sp),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ]),
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                                Positioned(
+                                  bottom: 35.h,
+                                  right: 20.w,
+                                  child: Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        positionsController
+                                            .showCreatePositionSheet(context)
+                                            .then((value) {
+                                          setState(() {});
+                                        });
+                                      },
+                                      child: Container(
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.r),
+                                              color: Colors.blue),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  'Add New Position',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontFamily: 'Poppins',
+                                                      fontSize: 16.sp),
+                                                )
                                               ],
                                             ),
-                                            SizedBox(
-                                              height: 4.h,
-                                            ),
-                                            Text(
-                                              'This is a simple role description',
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontFamily: 'Poppins',
-                                                  fontWeight: FontWeight.w200,
-                                                  fontSize: 18.sp),
-                                            ),
-                                          ]),
+                                          )),
                                     ),
                                   ),
-                                );
-                              }),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -419,12 +483,12 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                       width: double.infinity,
                       color: Colors.white12,
                       child: TabBar(
-                        controller: dashController.tabController,
+                        controller: tabController,
                         onTap: (int page) {
-                          dashController.tabCurrentPage = page;
+                          tabCurrentPage = page;
 
-                          dashController.tabPageController.animateToPage(
-                              dashController.tabCurrentPage,
+                          tabPageController.animateToPage(
+                              tabCurrentPage,
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.easeIn);
                         },
@@ -439,9 +503,10 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                                   fontWeight: FontWeight.w500),
                             ),
                           ),
+
                           Tab(
                             child: Text(
-                              ' System Roles',
+                              'Positions',
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: 'Poppins',

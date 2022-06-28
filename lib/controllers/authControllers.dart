@@ -14,21 +14,10 @@ class AuthController extends GetxController {
   TextEditingController referralID = TextEditingController();
   TextEditingController phoneNumber = TextEditingController();
   TextEditingController password = TextEditingController();
+  TextEditingController passwordConfirm = TextEditingController();
   TextEditingController emailAddress = TextEditingController();
-
-  TextEditingController field1 = TextEditingController();
-  TextEditingController field2 = TextEditingController();
-  TextEditingController field3 = TextEditingController();
-  TextEditingController field4 = TextEditingController();
-  TextEditingController field5 = TextEditingController();
-  TextEditingController field6 = TextEditingController();
-
-  FocusNode otp1 = FocusNode();
-  FocusNode otp2 = FocusNode();
-  FocusNode otp3 = FocusNode();
-  FocusNode otp4 = FocusNode();
-  FocusNode otp5 = FocusNode();
-  FocusNode otp6 = FocusNode();
+  TextEditingController fullName = TextEditingController();
+  TextEditingController location = TextEditingController();
 
   FocusNode nationalIDFocus = FocusNode();
   FocusNode referralIDFocus = FocusNode();

@@ -10,13 +10,13 @@ class TextBox extends StatefulWidget {
       this.maxLength,
       this.validator,
       required this.textEditingController,
-      required this.focusNode,
+
       required this.title,
       required this.hint})
       : super(key: key);
   final bool isPassword;
   final TextEditingController textEditingController;
-  final FocusNode focusNode;
+
   final String title;
   final String hint;
   final TextInputType? textInputType;
@@ -51,7 +51,7 @@ class _TextBoxState extends State<TextBox> {
               obscureText: widget.isPassword,
               validator: widget.validator,
               textCapitalization: widget.textCapitalization!,
-              focusNode: widget.focusNode,
+              
               controller: widget.textEditingController,
               keyboardType: widget.textInputType,
               maxLength: widget.maxLength,
@@ -68,10 +68,10 @@ class _TextBoxState extends State<TextBox> {
                   prefixStyle: TextStyle(
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w500,
-                      fontSize: 17.5.sp),
+                      fontSize: 18.5.sp),
                   hintText: widget.hint,
                   hintStyle: TextStyle(
-                      fontSize: 15.sp, color: const Color(0xffBDBDBD)),
+                      fontSize: 17.sp, color: Color.fromARGB(255, 125, 122, 122)),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(horizontal: 20.w)),
               onChanged: (value) {

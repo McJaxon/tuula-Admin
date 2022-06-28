@@ -1,16 +1,18 @@
 import 'dart:ui';
 
-import 'package:admin_banja/controllers/dashboard_controller.dart';
+import 'package:admin_banja/controllers/faq_controller.dart';
 import 'package:admin_banja/controllers/loan_category_controller.dart';
+import 'package:admin_banja/controllers/profession_controller.dart';
+import 'package:admin_banja/controllers/salary_scale_controller.dart';
+import 'package:admin_banja/controllers/transation_type_controller.dart';
 import 'package:admin_banja/services/server.dart';
 import 'package:admin_banja/widgets/loading_indicator.dart';
 import 'package:admin_banja/widgets/network_error.dart';
 import 'package:admin_banja/widgets/no_record_error.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:get/get.dart';
 
 class AppData extends StatefulWidget {
@@ -21,17 +23,27 @@ class AppData extends StatefulWidget {
 }
 
 class _AppDataState extends State<AppData> with TickerProviderStateMixin {
-  var dashController = Get.put(DashboardController());
+  late TabController tabController;
+  PageController controller = PageController();
+  int tabCurrentPage = 0;
+  var currentIndex = 0;
+  PageController tabPageController = PageController();
+
   var loanCategoryController = Get.put(LoanCategory());
+  var faqController = Get.put(FaqController());
+
+  var transactionTypeController = Get.put(TransactionTypeController());
+  var professionController = Get.put(ProfessionController());
+  var salaryController = Get.put(SalaryScaleController());
 
   @override
   void initState() {
-    dashController.tabController = TabController(length: 2, vsync: this);
-    dashController.controller.addListener(() {
-      if (dashController.controller.page == 0) {
-        dashController.currentIndex.value = 0;
+    tabController = TabController(length: 5, vsync: this);
+    controller.addListener(() {
+      if (controller.page == 0) {
+        currentIndex = 0;
       } else {
-        dashController.currentIndex.value = 1;
+        currentIndex = 1;
       }
     });
     super.initState();
@@ -46,8 +58,13 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
           Stack(
             children: [
               FutureBuilder(
-                  future: Future.wait(
-                      [Server.fetchAllLoanCategories(), Server().fetchLoans()]),
+                  future: Future.wait([
+                    Server.fetchAllFAQs(),
+                    Server.fetchAllLoanCategories(),
+                    Server.fetchTransactions(),
+                    Server.fetchSalaryScales(),
+                    Server.fetchProfessions()
+                  ]),
                   builder: (context, AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const LoadingData();
@@ -58,10 +75,9 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                     } else {
                       return Stack(children: [
                         PageView(
-                          controller: dashController.tabPageController,
+                          controller: tabPageController,
                           onPageChanged: (page) {
-                            dashController.tabController
-                                .animateTo(page.toInt());
+                            tabController.animateTo(page.toInt());
                           },
                           children: [
                             Stack(
@@ -70,6 +86,118 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                   padding: EdgeInsets.only(
                                       top: 240.h, bottom: 200.h),
                                   itemCount: snapshot.data[0]['payload'].length,
+                                  itemBuilder: ((context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10.r)),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(26.w),
+                                          child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  snapshot.data[0]['payload']
+                                                      [index]['question'],
+                                                  style: TextStyle(
+                                                      color: Colors.black87,
+                                                      fontFamily: 'Poppins',
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 20.sp),
+                                                ),
+                                                SizedBox(
+                                                  height: 10.h,
+                                                ),
+                                                const Divider(),
+                                                RichText(
+                                                  text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text: 'Answer: ',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black54,
+                                                              fontFamily:
+                                                                  'Poppins',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 16.sp),
+                                                        ),
+                                                        TextSpan(
+                                                          text: snapshot.data[0]
+                                                                  ['payload']
+                                                              [index]['answer'],
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontFamily:
+                                                                  'Poppins',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w200,
+                                                              fontSize: 16.sp),
+                                                        )
+                                                      ],
+                                                      style: const TextStyle(
+                                                          color: Colors.black)),
+                                                ),
+                                                SizedBox(height: 5.h),
+                                              ]),
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                                Positioned(
+                                  bottom: 35.h,
+                                  right: 20.w,
+                                  child: Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        faqController
+                                            .showCreateFAQSheet(context)
+                                            .then((value) {
+                                          setState(() {});
+                                        });
+                                      },
+                                      child: Container(
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.r),
+                                              color: Colors.blue),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  'Add New FAQ',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontFamily: 'Poppins',
+                                                      fontSize: 16.sp),
+                                                )
+                                              ],
+                                            ),
+                                          )),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Stack(
+                              children: [
+                                ListView.builder(
+                                  padding: EdgeInsets.only(
+                                      top: 240.h, bottom: 200.h),
+                                  itemCount: snapshot.data[1]['payload'].length,
                                   itemBuilder: ((context, index) {
                                     return Padding(
                                       padding: const EdgeInsets.all(8.0),
@@ -89,7 +217,7 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                                     Row(
                                                       children: [
                                                         Text(
-                                                          snapshot.data[0][
+                                                          snapshot.data[1][
                                                                       'payload']
                                                                   [index]
                                                               ['loan_type'],
@@ -126,7 +254,7 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                                           width: 10.w,
                                                         ),
                                                         Text(
-                                                          snapshot.data[0][
+                                                          snapshot.data[1][
                                                                       'payload']
                                                                   [index]
                                                               ['abbreviation'],
@@ -161,7 +289,7 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                                         ),
                                                         SizedBox(width: 10.w),
                                                         Text(
-                                                          snapshot.data[0][
+                                                          snapshot.data[1][
                                                                       'payload']
                                                                   [index]
                                                               ['interest_type'],
@@ -196,7 +324,7 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                                         ),
                                                         SizedBox(width: 10.w),
                                                         Text(
-                                                          snapshot.data[0]
+                                                          snapshot.data[1]
                                                                   ['payload']
                                                                   [index][
                                                                   'minimum_amount']
@@ -232,7 +360,7 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                                         ),
                                                         SizedBox(width: 10.w),
                                                         Text(
-                                                          snapshot.data[0]
+                                                          snapshot.data[1]
                                                                   ['payload']
                                                                   [index][
                                                                   'maximum_amount']
@@ -253,7 +381,7 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                                       height: 15.h,
                                                     ),
                                                     Text(
-                                                      snapshot.data[0]
+                                                      snapshot.data[1]
                                                               ['payload'][index]
                                                           ['description'],
                                                       style: TextStyle(
@@ -291,7 +419,7 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                                               .showEditLoanSheet(
                                                                   context,
                                                                   snapshot.data[
-                                                                              0]
+                                                                              1]
                                                                           [
                                                                           'payload']
                                                                       [index])
@@ -317,7 +445,7 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                                               .confirmLoanTypeDelete(
                                                                   context,
                                                                   snapshot.data[
-                                                                              0]
+                                                                              1]
                                                                           [
                                                                           'payload']
                                                                       [
@@ -376,42 +504,254 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                 ),
                               ],
                             ),
-                            ListView.builder(
-                              padding:
-                                  EdgeInsets.only(top: 240.h, bottom: 200.h),
-                              itemCount: snapshot.data[1]['payload'].length,
-                              itemBuilder: ((context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius:
-                                            BorderRadius.circular(10.r)),
-                                    child: Padding(
-                                      padding: EdgeInsets.all(26.w),
-                                      child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Column(
+                            Stack(
+                              children: [
+                                ListView.builder(
+                                  padding: EdgeInsets.only(
+                                      top: 240.h, bottom: 200.h),
+                                  itemCount: snapshot.data[2]['payload'].length,
+                                  itemBuilder: ((context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10.r)),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(24.w),
+                                          child: Stack(
+                                            children: [
+                                              Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    Text(
-                                                      snapshot.data[1]
-                                                              ['payload'][index]
-                                                          ['loan_type'],
-                                                      style: TextStyle(
-                                                          color: Colors.black87,
-                                                          fontFamily: 'Poppins',
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontSize: 20.sp),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          snapshot.data[2]
+                                                                  ['payload']
+                                                              [index]['name'],
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black87,
+                                                              fontFamily:
+                                                                  'Poppins',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              fontSize: 23.sp),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 20.h,
+                                                    ),
+                                                    RichText(
+                                                        text: TextSpan(
+                                                            text:
+                                                                'Description: ',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black54,
+                                                                fontFamily:
+                                                                    'Poppins',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                fontSize:
+                                                                    18.sp),
+                                                            children: [
+                                                          TextSpan(
+                                                            text: snapshot.data[
+                                                                            2][
+                                                                        'payload']
+                                                                    [index]
+                                                                ['description'],
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily:
+                                                                    'Poppins',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w200,
+                                                                fontSize:
+                                                                    18.sp),
+                                                          )
+                                                        ])),
+                                                    SizedBox(
+                                                      height: 10.h,
+                                                    ),
+                                                  ]),
+                                              Positioned(
+                                                top: 0.h,
+                                                right: 0.w,
+                                                child: Container(
+                                                  width: 160.w,
+                                                  height: 40.h,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.r),
+                                                      color:
+                                                          Colors.blue.shade100),
+                                                  child: Row(children: [
+                                                    Expanded(
+                                                      child: TextButton(
+                                                        child: Text(
+                                                          'Edit',
+                                                          style: TextStyle(
+                                                              fontSize: 14.sp,
+                                                              fontFamily:
+                                                                  'Poppins'),
+                                                        ),
+                                                        onPressed: () {
+                                                          // loanCategoryController
+                                                          //     .showEditLoanSheet(
+                                                          //         context,
+                                                          //         snapshot.data[
+                                                          //                     0]
+                                                          //                 [
+                                                          //                 'payload']
+                                                          //             [index])
+                                                          //     .then((value) {
+                                                          //   setState(() {});
+                                                          // });
+                                                        },
+                                                      ),
+                                                    ),
+                                                    const VerticalDivider(),
+                                                    Expanded(
+                                                      child: TextButton(
+                                                        child: Text(
+                                                          'Delete',
+                                                          style: TextStyle(
+                                                              fontSize: 14.sp,
+                                                              color: Colors.red,
+                                                              fontFamily:
+                                                                  'Poppins'),
+                                                        ),
+                                                        onPressed: () {
+                                                          // loanCategoryController
+                                                          //     .confirmLoanTypeDelete(
+                                                          //         context,
+                                                          //         snapshot.data[
+                                                          //                     0]
+                                                          //                 [
+                                                          //                 'payload']
+                                                          //             [
+                                                          //             index]['id'])
+                                                          //     .then((value) {
+                                                          //   setState(() {});
+                                                          // });
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ]),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                                Positioned(
+                                  bottom: 35.h,
+                                  right: 20.w,
+                                  child: Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        transactionTypeController
+                                            .showCreateTransactionTypeSheet(
+                                                context)
+                                            .then((value) {
+                                          setState(() {});
+                                        });
+                                      },
+                                      child: Container(
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.r),
+                                              color: Colors.blue),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  'Add New Transaction Type',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontFamily: 'Poppins',
+                                                      fontSize: 16.sp),
+                                                )
+                                              ],
+                                            ),
+                                          )),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Stack(
+                              children: [
+                                ListView.builder(
+                                  padding: EdgeInsets.only(
+                                      top: 240.h, bottom: 200.h),
+                                  itemCount: snapshot.data[3]['payload'].length,
+                                  itemBuilder: ((context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10.r)),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(24.w),
+                                          child: Stack(
+                                            children: [
+                                              Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          'ID:',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black54,
+                                                              fontFamily:
+                                                                  'Poppins',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 18.sp),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 10.w,
+                                                        ),
+                                                        Text(
+                                                          snapshot.data[3]
+                                                                  ['payload']
+                                                                  [index]['id']
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black87,
+                                                              fontFamily:
+                                                                  'Poppins',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              fontSize: 23.sp),
+                                                        ),
+                                                      ],
                                                     ),
                                                     SizedBox(
                                                       height: 10.h,
@@ -419,7 +759,7 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                                     Row(
                                                       children: [
                                                         Text(
-                                                          'Applicant:',
+                                                          'Minimum income:',
                                                           style: TextStyle(
                                                               color: Colors
                                                                   .black54,
@@ -428,16 +768,16 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w600,
-                                                              fontSize: 16.sp),
+                                                              fontSize: 18.sp),
                                                         ),
                                                         SizedBox(
                                                           width: 10.w,
                                                         ),
                                                         Text(
-                                                          snapshot.data[1][
+                                                          snapshot.data[3][
                                                                       'payload']
-                                                                  [index]
-                                                              ['full_names'],
+                                                                  [index][
+                                                              'minimum_income'],
                                                           style: TextStyle(
                                                               color:
                                                                   Colors.black,
@@ -446,15 +786,17 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w200,
-                                                              fontSize: 16.sp),
+                                                              fontSize: 18.sp),
                                                         ),
                                                       ],
                                                     ),
-                                                    SizedBox(height: 5.h),
+                                                    SizedBox(
+                                                      height: 10.h,
+                                                    ),
                                                     Row(
                                                       children: [
                                                         Text(
-                                                          'NIN:',
+                                                          'Maximum Income:',
                                                           style: TextStyle(
                                                               color: Colors
                                                                   .black54,
@@ -463,15 +805,14 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w600,
-                                                              fontSize: 16.sp),
+                                                              fontSize: 18.sp),
                                                         ),
-                                                        SizedBox(
-                                                          width: 10.w,
-                                                        ),
+                                                        SizedBox(width: 10.w),
                                                         Text(
-                                                          snapshot.data[1]
-                                                                  ['payload']
-                                                              [index]['nin'],
+                                                          snapshot.data[3][
+                                                                      'payload']
+                                                                  [index][
+                                                              'maximum_income'],
                                                           style: TextStyle(
                                                               color:
                                                                   Colors.black,
@@ -480,107 +821,399 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w200,
-                                                              fontSize: 16.sp),
+                                                              fontSize: 18.sp),
                                                         ),
                                                       ],
                                                     ),
-                                                  ],
+                                                    SizedBox(
+                                                      height: 15.h,
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          'Income Range:',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black54,
+                                                              fontFamily:
+                                                                  'Poppins',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 18.sp),
+                                                        ),
+                                                        SizedBox(width: 10.w),
+                                                        Text(
+                                                          snapshot.data[3]
+                                                                  ['payload']
+                                                                  [index][
+                                                                  'income_range']
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontFamily:
+                                                                  'Poppins',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w200,
+                                                              fontSize: 18.sp),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ]),
+                                              Positioned(
+                                                top: 0.h,
+                                                right: 0.w,
+                                                child: Container(
+                                                  width: 160.w,
+                                                  height: 40.h,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.r),
+                                                      color:
+                                                          Colors.blue.shade100),
+                                                  child: Row(children: [
+                                                    Expanded(
+                                                      child: TextButton(
+                                                        child: Text(
+                                                          'Edit',
+                                                          style: TextStyle(
+                                                              fontSize: 14.sp,
+                                                              fontFamily:
+                                                                  'Poppins'),
+                                                        ),
+                                                        onPressed: () {
+                                                          // loanCategoryController
+                                                          //     .showEditLoanSheet(
+                                                          //         context,
+                                                          //         snapshot.data[
+                                                          //                     0]
+                                                          //                 [
+                                                          //                 'payload']
+                                                          //             [index])
+                                                          //     .then((value) {
+                                                          //   setState(() {});
+                                                          // });
+                                                        },
+                                                      ),
+                                                    ),
+                                                    const VerticalDivider(),
+                                                    Expanded(
+                                                      child: TextButton(
+                                                        child: Text(
+                                                          'Delete',
+                                                          style: TextStyle(
+                                                              fontSize: 14.sp,
+                                                              color: Colors.red,
+                                                              fontFamily:
+                                                                  'Poppins'),
+                                                        ),
+                                                        onPressed: () {
+                                                          // loanCategoryController
+                                                          //     .confirmLoanTypeDelete(
+                                                          //         context,
+                                                          //         snapshot.data[
+                                                          //                     0]
+                                                          //                 [
+                                                          //                 'payload']
+                                                          //             [
+                                                          //             index]['id'])
+                                                          //     .then((value) {
+                                                          //   setState(() {});
+                                                          // });
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ]),
                                                 ),
-                                                const Spacer(),
-                                                CircleAvatar(
-                                                    radius: 40.r,
-                                                    backgroundImage:
-                                                        NetworkImage(
-                                                      snapshot.data[1]
-                                                              ['payload'][index]
-                                                          ['profile_pic'],
-                                                    )),
-                                              ],
-                                            ),
-                                            const Divider(
-                                              color: Colors.black38,
-                                            ),
-                                            SizedBox(
-                                              height: 10.h,
-                                            ),
-                                            Row(
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                                Positioned(
+                                  bottom: 35.h,
+                                  right: 20.w,
+                                  child: Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        salaryController
+                                            .showCreateSalarySheet(context)
+                                            .then((value) {
+                                          setState(() {});
+                                        });
+                                      },
+                                      child: Container(
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.r),
+                                              color: Colors.blue),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
                                               children: [
                                                 Text(
-                                                  'Amount:',
+                                                  'Add New Salary Scale',
                                                   style: TextStyle(
-                                                      color: Colors.black54,
+                                                      color: Colors.white,
                                                       fontFamily: 'Poppins',
-                                                      fontWeight:
-                                                          FontWeight.w600,
                                                       fontSize: 16.sp),
-                                                ),
-                                                const Spacer(),
-                                                Text(
-                                                  'UGX ${snapshot.data[1]['payload'][index]['loan_amount']}/=',
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontFamily: 'Poppins',
-                                                      fontWeight:
-                                                          FontWeight.w200,
-                                                      fontSize: 16.sp),
-                                                ),
+                                                )
                                               ],
                                             ),
-                                            SizedBox(height: 4.h),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'Payout:',
-                                                  style: TextStyle(
-                                                      color: Colors.black54,
-                                                      fontFamily: 'Poppins',
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 18.sp),
-                                                ),
-                                                const Spacer(),
-                                                Text(
-                                                  'UGX ${snapshot.data[1]['payload'][index]['pay_back']}/=',
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontFamily: 'Poppins',
-                                                      fontWeight:
-                                                          FontWeight.w200,
-                                                      fontSize: 18.sp),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: 4.h,
-                                            ),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  'Outstanding balance:',
-                                                  style: TextStyle(
-                                                      color: Colors.black54,
-                                                      fontFamily: 'Poppins',
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 18.sp),
-                                                ),
-                                                const Spacer(),
-                                                Text(
-                                                  'UGX ${snapshot.data[1]['payload'][index]['outstanding_balance']}/=',
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontFamily: 'Poppins',
-                                                      fontWeight:
-                                                          FontWeight.w200,
-                                                      fontSize: 18.sp),
-                                                ),
-                                              ],
-                                            )
-                                          ]),
+                                          )),
                                     ),
                                   ),
-                                );
-                              }),
+                                ),
+                              ],
+                            ),
+                            Stack(
+                              children: [
+                                ListView.builder(
+                                  padding: EdgeInsets.only(
+                                      top: 240.h, bottom: 200.h),
+                                  itemCount: snapshot.data[4]['payload'].length,
+                                  itemBuilder: ((context, index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10.r)),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(24.w),
+                                          child: Stack(
+                                            children: [
+                                              Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          'ID:',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black54,
+                                                              fontFamily:
+                                                                  'Poppins',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 18.sp),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 10.w,
+                                                        ),
+                                                        Text(
+                                                          snapshot.data[4]
+                                                                  ['payload']
+                                                                  [index]['id']
+                                                              .toString(),
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black87,
+                                                              fontFamily:
+                                                                  'Poppins',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              fontSize: 23.sp),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10.h,
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                          'Title:',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .black54,
+                                                              fontFamily:
+                                                                  'Poppins',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 18.sp),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 10.w,
+                                                        ),
+                                                        Text(
+                                                          snapshot.data[4]
+                                                                  ['payload']
+                                                              [index]['name'],
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontFamily:
+                                                                  'Poppins',
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w200,
+                                                              fontSize: 18.sp),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10.h,
+                                                    ),
+                                                    RichText(
+                                                        text: TextSpan(
+                                                            text:
+                                                                'Description: ',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black54,
+                                                                fontFamily:
+                                                                    'Poppins',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                fontSize:
+                                                                    18.sp),
+                                                            children: [
+                                                          TextSpan(
+                                                            text: snapshot.data[
+                                                                            4][
+                                                                        'payload']
+                                                                    [index]
+                                                                ['description'],
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontFamily:
+                                                                    'Poppins',
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w200,
+                                                                fontSize:
+                                                                    18.sp),
+                                                          )
+                                                        ])),
+                                                  ]),
+                                              Positioned(
+                                                top: 0.h,
+                                                right: 0.w,
+                                                child: Container(
+                                                  width: 160.w,
+                                                  height: 40.h,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.r),
+                                                      color:
+                                                          Colors.blue.shade100),
+                                                  child: Row(children: [
+                                                    Expanded(
+                                                      child: TextButton(
+                                                        child: Text(
+                                                          'Edit',
+                                                          style: TextStyle(
+                                                              fontSize: 14.sp,
+                                                              fontFamily:
+                                                                  'Poppins'),
+                                                        ),
+                                                        onPressed: () {
+                                                          // loanCategoryController
+                                                          //     .showEditLoanSheet(
+                                                          //         context,
+                                                          //         snapshot.data[
+                                                          //                     0]
+                                                          //                 [
+                                                          //                 'payload']
+                                                          //             [index])
+                                                          //     .then((value) {
+                                                          //   setState(() {});
+                                                          // });
+                                                        },
+                                                      ),
+                                                    ),
+                                                    const VerticalDivider(),
+                                                    Expanded(
+                                                      child: TextButton(
+                                                        child: Text(
+                                                          'Delete',
+                                                          style: TextStyle(
+                                                              fontSize: 14.sp,
+                                                              color: Colors.red,
+                                                              fontFamily:
+                                                                  'Poppins'),
+                                                        ),
+                                                        onPressed: () {
+                                                          // loanCategoryController
+                                                          //     .confirmLoanTypeDelete(
+                                                          //         context,
+                                                          //         snapshot.data[
+                                                          //                     0]
+                                                          //                 [
+                                                          //                 'payload']
+                                                          //             [
+                                                          //             index]['id'])
+                                                          //     .then((value) {
+                                                          //   setState(() {});
+                                                          // });
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ]),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                                Positioned(
+                                  bottom: 35.h,
+                                  right: 20.w,
+                                  child: Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        professionController
+                                            .showCreateProfessionSheet(context)
+                                            .then((value) {
+                                          setState(() {});
+                                        });
+                                      },
+                                      child: Container(
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.r),
+                                              color: Colors.blue),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  'Add New Profession',
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontFamily: 'Poppins',
+                                                      fontSize: 16.sp),
+                                                )
+                                              ],
+                                            ),
+                                          )),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -597,19 +1230,19 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                       width: double.infinity,
                       color: Colors.white12,
                       child: TabBar(
-                        controller: dashController.tabController,
+                        isScrollable: true,
+                        controller: tabController,
                         onTap: (int page) {
-                          dashController.tabCurrentPage = page;
+                          tabCurrentPage = page;
 
-                          dashController.tabPageController.animateToPage(
-                              dashController.tabCurrentPage,
+                          tabPageController.animateToPage(tabCurrentPage,
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.easeIn);
                         },
                         tabs: const [
                           Tab(
                             child: Text(
-                              'Loan Categories',
+                              'FAQs',
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: 'Poppins',
@@ -619,7 +1252,37 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                           ),
                           Tab(
                             child: Text(
-                              'Publications',
+                              'Loan Types',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Poppins',
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          Tab(
+                            child: Text(
+                              'Transaction Types',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Poppins',
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          Tab(
+                            child: Text(
+                              'Salary Scale',
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Poppins',
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          Tab(
+                            child: Text(
+                              'Professions',
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: 'Poppins',
