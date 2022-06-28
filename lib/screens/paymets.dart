@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class PaymentsPage extends StatefulWidget {
   const PaymentsPage({Key? key}) : super(key: key);
@@ -26,7 +27,7 @@ class _RecordsPageState extends State<PaymentsPage> {
       body: Stack(
         children: <Widget>[
           FutureBuilder(
-              future: Server.fetchAllPayments(),
+              future: Server.fetchTransactionFlv(),
               builder: (context, AsyncSnapshot snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const LoadingData();
@@ -37,7 +38,7 @@ class _RecordsPageState extends State<PaymentsPage> {
                 } else {
                   return Padding(
                     padding: EdgeInsets.only(
-                      top: 265.h,
+                      top: 65.h,
                     ),
                     child: Stack(
                       children: [
@@ -47,14 +48,14 @@ class _RecordsPageState extends State<PaymentsPage> {
                             children: [
                               Row(
                                 children: [
-                                  Text(
-                                    'There are currently no payments made',
-                                    style: TextStyle(
-                                        color: Colors.black87,
-                                        fontFamily: 'Poppins',
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 20.sp),
-                                  ),
+                                  // Text(
+                                  //   'There are currently no payments made',
+                                  //   style: TextStyle(
+                                  //       color: Colors.black87,
+                                  //       fontFamily: 'Poppins',
+                                  //       fontWeight: FontWeight.w400,
+                                  //       fontSize: 20.sp),
+                                  // ),
                                   // Text(
                                   //   'UGX ' +
                                   //       snapshot.data['loan_amount']
@@ -120,7 +121,7 @@ class _RecordsPageState extends State<PaymentsPage> {
                           child: ListView.builder(
                             padding: EdgeInsets.symmetric(
                                 vertical: 30.h, horizontal: 20.w),
-                            itemCount: snapshot.data['payload'].length,
+                            itemCount: snapshot.data.length,
                             itemBuilder: ((context, index) {
                               return Padding(
                                 padding:
@@ -143,113 +144,13 @@ class _RecordsPageState extends State<PaymentsPage> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      //Spacer(),
-                                                      Text(
-                                                        snapshot.data['payload']
-                                                                [index]
-                                                            ['loan_type'],
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black87,
-                                                            fontFamily:
-                                                                'Poppins',
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            fontSize: 23.sp),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    height: 10.h,
-                                                  ),
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        'Loan Status',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black54,
-                                                            fontFamily:
-                                                                'Poppins',
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            fontSize: 18.sp),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 10.w,
-                                                      ),
-                                                      Text(
-                                                        snapshot.data['payload']
-                                                                        [index][
-                                                                    'is_approved'] ==
-                                                                '0'
-                                                            ? 'Not Approved'
-                                                            : 'Approved',
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontFamily:
-                                                                'Poppins',
-                                                            fontWeight:
-                                                                FontWeight.w200,
-                                                            fontSize: 18.sp),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(
-                                                    height: 10.h,
-                                                  ),
-                                                  Row(
-                                                    children: [
-                                                      Text(
-                                                        'Loan Amount:',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black54,
-                                                            fontFamily:
-                                                                'Poppins',
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            fontSize: 18.sp),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 10.w,
-                                                      ),
-                                                      Text(
-                                                        snapshot.data['payload']
-                                                                [index]
-                                                                ['loan_amount']
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            color: Colors.black,
-                                                            fontFamily:
-                                                                'Poppins',
-                                                            fontWeight:
-                                                                FontWeight.w200,
-                                                            fontSize: 18.sp),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
                                           SizedBox(
                                             height: 10.h,
                                           ),
                                           Row(
                                             children: [
                                               Text(
-                                                'Pay Back amount:',
+                                                'Paid By',
                                                 style: TextStyle(
                                                     color: Colors.black54,
                                                     fontFamily: 'Poppins',
@@ -258,7 +159,8 @@ class _RecordsPageState extends State<PaymentsPage> {
                                               ),
                                               const Spacer(),
                                               Text(
-                                                'UGX ${snapshot.data['payload'][index]['pay_back']}/=',
+                                                snapshot.data[index]['customer']
+                                                    ['name'],
                                                 style: TextStyle(
                                                     color: Colors.black,
                                                     fontFamily: 'Poppins',
@@ -273,7 +175,7 @@ class _RecordsPageState extends State<PaymentsPage> {
                                           Row(
                                             children: [
                                               Text(
-                                                'Interest Rate:',
+                                                'Email',
                                                 style: TextStyle(
                                                     color: Colors.black54,
                                                     fontFamily: 'Poppins',
@@ -282,7 +184,8 @@ class _RecordsPageState extends State<PaymentsPage> {
                                               ),
                                               const Spacer(),
                                               Text(
-                                                '${snapshot.data['payload'][index]['interest_rate']}%',
+                                                snapshot.data[index]['customer']
+                                                    ['email'],
                                                 style: TextStyle(
                                                     color: Colors.black,
                                                     fontFamily: 'Poppins',
@@ -294,8 +197,27 @@ class _RecordsPageState extends State<PaymentsPage> {
                                           SizedBox(
                                             height: 10.h,
                                           ),
-                                          const Divider(
-                                            color: Colors.black38,
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'Phone',
+                                                style: TextStyle(
+                                                    color: Colors.black54,
+                                                    fontFamily: 'Poppins',
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 18.sp),
+                                              ),
+                                              const Spacer(),
+                                              Text(
+                                                snapshot.data[index]['customer']
+                                                    ['phone_number'],
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontFamily: 'Poppins',
+                                                    fontWeight: FontWeight.w200,
+                                                    fontSize: 18.sp),
+                                              ),
+                                            ],
                                           ),
                                           SizedBox(
                                             height: 10.h,
@@ -303,42 +225,20 @@ class _RecordsPageState extends State<PaymentsPage> {
                                           Row(
                                             children: [
                                               Text(
-                                                'Expected Completion Date:',
+                                                'Paid Amount:',
                                                 style: TextStyle(
                                                     color: Colors.black54,
                                                     fontFamily: 'Poppins',
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 18.sp),
                                               ),
-                                              const Spacer(),
-                                              // Text(
-                                              //   snapshot.data['payload'][index]
-                                              //       ['transaction_mode'],
-                                              //   style: TextStyle(
-                                              //       color: Colors.black,
-                                              //       fontFamily: 'Poppins',
-                                              //       fontWeight: FontWeight.w200,
-                                              //       fontSize: 18.sp),
-                                              // ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 15.h,
-                                          ),
-                                          Row(
-                                            children: [
+                                              Spacer(),
                                               Text(
-                                                'Payment Time:',
-                                                style: TextStyle(
-                                                    color: Colors.black54,
-                                                    fontFamily: 'Poppins',
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 18.sp),
-                                              ),
-                                              const Spacer(),
-                                              Text(
-                                                snapshot.data['payload'][index]
-                                                    ['payment_time'],
+                                                'UGX' +
+                                                    snapshot.data[index]
+                                                            ['charged_amount']
+                                                        .toString() +
+                                                    '/=',
                                                 style: TextStyle(
                                                     color: Colors.black,
                                                     fontFamily: 'Poppins',
@@ -348,12 +248,65 @@ class _RecordsPageState extends State<PaymentsPage> {
                                             ],
                                           ),
                                           SizedBox(
-                                            height: 15.h,
+                                            height: 10.h,
                                           ),
                                           Row(
                                             children: [
                                               Text(
-                                                'Payment Mode:',
+                                                'Payment Date:',
+                                                style: TextStyle(
+                                                    color: Colors.black54,
+                                                    fontFamily: 'Poppins',
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 18.sp),
+                                              ),
+                                              Spacer(),
+                                              Text(
+                                                DateFormat.yMEd()
+                                                    .format(DateTime.parse(
+                                                        snapshot.data[index]
+                                                            ['created_at']))
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontFamily: 'Poppins',
+                                                    fontWeight: FontWeight.w200,
+                                                    fontSize: 18.sp),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 10.h,
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'Payment Status:',
+                                                style: TextStyle(
+                                                    color: Colors.black54,
+                                                    fontFamily: 'Poppins',
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 18.sp),
+                                              ),
+                                              Spacer(),
+                                              Text(
+                                                snapshot.data[index]['status']
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontFamily: 'Poppins',
+                                                    fontWeight: FontWeight.w200,
+                                                    fontSize: 18.sp),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 10.h,
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'Paid Using:',
                                                 style: TextStyle(
                                                     color: Colors.black54,
                                                     fontFamily: 'Poppins',
@@ -362,8 +315,7 @@ class _RecordsPageState extends State<PaymentsPage> {
                                               ),
                                               const Spacer(),
                                               Text(
-                                                snapshot.data['payload'][index]
-                                                    ['payment_mode'],
+                                                '${snapshot.data[index]['auth_model']}',
                                                 style: TextStyle(
                                                     color: Colors.black,
                                                     fontFamily: 'Poppins',
@@ -371,7 +323,31 @@ class _RecordsPageState extends State<PaymentsPage> {
                                                     fontSize: 18.sp),
                                               ),
                                             ],
-                                          )
+                                          ),
+                                          SizedBox(
+                                            height: 10.h,
+                                          ),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'Transaction ID:',
+                                                style: TextStyle(
+                                                    color: Colors.black54,
+                                                    fontFamily: 'Poppins',
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 18.sp),
+                                              ),
+                                              const Spacer(),
+                                              Text(
+                                                '${snapshot.data[index]['tx_ref']}',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontFamily: 'Poppins',
+                                                    fontWeight: FontWeight.w200,
+                                                    fontSize: 18.sp),
+                                              ),
+                                            ],
+                                          ),
                                         ]),
                                   ),
                                 ),
