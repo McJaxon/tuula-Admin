@@ -1,6 +1,7 @@
 import 'package:admin_banja/controllers/dashboard_controller.dart';
 import 'package:admin_banja/controllers/homePageController.dart';
 import 'package:admin_banja/screens/app_data.dart';
+import 'package:admin_banja/screens/auth/payouts.dart';
 import 'package:admin_banja/screens/auth/register_page.dart';
 import 'package:admin_banja/screens/dash.dart';
 import 'package:admin_banja/screens/paymets.dart';
@@ -106,9 +107,9 @@ class SliderView extends StatelessWidget {
                 iconData: 'Chart',
                 screen: const UserRoles()),
             _SliderMenuItem(
-                title: 'Public Area',
+                title: 'Transfers',
                 iconData: 'Chart',
-                screen: const PublicArea()),
+                screen: const Payout()),
             const Spacer(),
             const Spacer(),
             _SliderMenuItem(
