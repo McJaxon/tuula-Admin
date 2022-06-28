@@ -47,6 +47,7 @@ dependencies:
   modal_bottom_sheet: ^2.0.1
   card_swiper: ^2.0.3
   syncfusion_flutter_gauges: ^20.1.57
+  nanoid: ^1.0.0
 
 dev_dependencies:
   flutter_test:
