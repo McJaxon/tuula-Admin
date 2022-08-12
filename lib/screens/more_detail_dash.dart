@@ -1,10 +1,13 @@
 import 'dart:ui';
 
+import 'package:admin_banja/services/server.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 class MoreDetails extends StatefulWidget {
-  const MoreDetails({Key? key,required this.data, required this.title}) : super(key: key);
+  const MoreDetails({Key? key, required this.data, required this.title})
+      : super(key: key);
   final String title;
   final List data;
 
@@ -40,8 +43,7 @@ class _MoreDetailsState extends State<MoreDetails> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  widget.data[index]
-                                      ['full_names'],
+                                  widget.data[index]['full_names'],
                                   style: TextStyle(
                                       color: Colors.black87,
                                       fontFamily: 'Poppins',
@@ -51,33 +53,29 @@ class _MoreDetailsState extends State<MoreDetails> {
                                 SizedBox(
                                   height: 10.h,
                                 ),
-                                Row(
-                                  children: [
-                                    Text(
-                                      'NIN:',
-                                      style: TextStyle(
-                                          color: Colors.black54,
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 18.sp),
-                                    ),
-                                    SizedBox(
-                                      width: 10.w,
-                                    ),
-                                    Text(
-                                      widget.data[index]['nin'],
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontFamily: 'Poppins',
-                                          fontWeight: FontWeight.w200,
-                                          fontSize: 18.sp),
-                                    ),
-                                  ],
-                                ),
                               ],
                             ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'NIN:',
+                              style: TextStyle(
+                                  color: Colors.black54,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18.sp),
+                            ),
                             const Spacer(),
-
+                            Text(
+                              widget.data[index]['nin'],
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w200,
+                                  fontSize: 18.sp),
+                            ),
                           ],
                         ),
                         SizedBox(
@@ -93,9 +91,9 @@ class _MoreDetailsState extends State<MoreDetails> {
                                   fontWeight: FontWeight.w600,
                                   fontSize: 18.sp),
                             ),
-                            SizedBox(width: 10.w),
+                            const Spacer(),
                             Text(
-                              widget.data[index]['outstanding_balance'],
+                              'UGX ${NumberFormat.decimalPattern().format(int.parse(widget.data[index]['outstanding_balance']))} /=',
                               style: TextStyle(
                                   color: Colors.black,
                                   fontFamily: 'Poppins',
@@ -104,9 +102,84 @@ class _MoreDetailsState extends State<MoreDetails> {
                             ),
                           ],
                         ),
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                                'Remittance - ${widget.data[index]['payment_time']}:',
+                                style: TextStyle(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: 'Poppins',
+                                    fontSize: 18.sp)),
+                            const Spacer(),
+                            Text(widget.data[index]['payment_mode'],
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'Poppins',
+                                    color: Colors.black54,
+                                    fontSize: 18.sp)),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10.h,
+                        ),
+                        const Divider(),
+                        Row(
+                          children: [
+                            ActionChip(
+                              backgroundColor: Colors.green,
+                              onPressed: () {
+                                Server()
+                                    .acceptLoanService(
+                                        context, widget.data[index])
+                                    .then((value) {
+                                  if (value) {
+                                    // widget.currentApplications
+                                    //     .removeAt(index);
+                                    setState(() {});
+                                  }
 
-
-
+                                  // Get.back();
+                                });
+                              },
+                              avatar: const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                              ),
+                              label: Text('Accept',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Poppins',
+                                      color: Colors.white,
+                                      fontSize: 17.sp)),
+                            ),
+                            const Spacer(),
+                            ActionChip(
+                              backgroundColor: Colors.red,
+                              onPressed: () {
+                                Server()
+                                    .declineLoanService(
+                                        widget.data[index]['id'])
+                                    .then((value) {
+                                  setState(() {});
+                                });
+                              },
+                              avatar: const Icon(
+                                Icons.cancel_rounded,
+                                color: Colors.white,
+                              ),
+                              label: Text('Decline',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Poppins',
+                                      fontSize: 17.sp)),
+                            ),
+                          ],
+                        )
                       ]),
                 ),
               ),

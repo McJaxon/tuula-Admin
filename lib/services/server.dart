@@ -11,6 +11,7 @@
 // ignore_for_file: unused_local_variable
 
 import 'dart:async';
+import 'dart:developer';
 import 'dart:convert';
 import 'package:admin_banja/constants/strings.dart';
 import 'package:admin_banja/controllers/loanDetailControllers.dart';
@@ -41,7 +42,7 @@ enum Category {
 class Server extends GetxController {
   static final accessToken = GetStorage().read('accessToken');
 
-  ///creating user
+  ///reimburse payment to loan applicant
   static Future makeCashOut(
       String phoneNumber, String clientNames, String amount) async {
     try {
@@ -251,69 +252,7 @@ class Server extends GetxController {
     }
   }
 
-  // ///synchronize loan application record with the server
-  // static Future syncLoanApplication(
-  //     LoanApplicationModel loanApplicationDetails) async {
-  //   CustomOverlay.showLoaderOverlay(duration: 6);
-  //   final loanController = Get.put(LoanDetailController());
-  //   //Future userDetails = LocalDB.getUserDetails();
-
-  //   //var userDetailsBody = await userDetails;
-
-  //   //List<Map<String, dynamic>> raw = userDetailsBody;
-
-  //   var request = http.MultipartRequest(
-  //       'POST', Uri.parse('$baseUrl/loan/new_loan_application'))
-  //     ..headers.addAll(
-  //       {"Authorization": 'Bearer $accessToken'},
-  //     )
-  //     ..fields.addAll(
-  //       {
-  //         'loan_type': loanApplicationDetails.loanType,
-  //         'loan_id': loanApplicationDetails.loanID,
-  //         'user_id': GetStorage().read('userID').toString(),
-  //         'loan_amount': loanApplicationDetails.loanAmount.toString(),
-  //         'tenure_period': loanApplicationDetails.tenurePeriod.toString(),
-  //         'payment_frequency':
-  //             loanApplicationDetails.paymentFrequency.toString(),
-  //         'interest_rate': loanApplicationDetails.interestRate.toString(),
-  //         'transaction_source': loanApplicationDetails.transactionSource,
-  //         'principal': loanApplicationDetails.principal.toString(),
-  //         'interest': loanApplicationDetails.interest.toString(),
-  //         'outstanding_balance':
-  //             loanApplicationDetails.outstandingBalance.toString(),
-  //         'pay_off_date': loanApplicationDetails.payOffDate.toString(),
-  //         'payment_mode': loanApplicationDetails.paymentMode,
-  //         'payment_time': loanApplicationDetails.paymentTime,
-  //         'loan_period': loanApplicationDetails.loanPeriod,
-  //         'pay_back': loanApplicationDetails.payBack.toString(),
-  //         'is_cleared': loanApplicationDetails.isCleared ? '1' : '0',
-  //         'approved_status': loanApplicationDetails.approvedStatus ? '1' : '0',
-  //       },
-  //     );
-
-  //   ///clean up data before sending it
-  //   // ignore: avoid_single_cascade_in_expression_statements
-  //   request..fields.removeWhere((key, value) => value == '');
-
-  //   var response = await request.send();
-
-  //   final message = await http.Response.fromStream(response);
-  //   debugPrint(message.body);
-
-  //   if (json.decode(message.body)['success'] == true) {
-  //     CustomOverlay.showToast(
-  //         'Loan application successful!', Colors.green, Colors.white);
-  //   } else {
-  //     CustomOverlay.showToast('Something went wrong', Colors.red, Colors.white);
-  //   }
-
-  //   HapticFeedback.selectionClick();
-
-  //   return response;
-  // }
-
-  ///synchronize loan application record with the server
+  ///create position method
   static Future createPosition(PositionModel positionDetails) async {
     CustomOverlay.showLoaderOverlay(duration: 6);
 
@@ -353,7 +292,7 @@ class Server extends GetxController {
     return response;
   }
 
-  ///synchronize loan application record with the server
+  ///create new loan category method
   static Future createLoanCategory(
       LoanCategoryModel loanCategoryDetails) async {
     CustomOverlay.showLoaderOverlay(duration: 6);
@@ -399,7 +338,7 @@ class Server extends GetxController {
     return response;
   }
 
-  ///synchronize loan application record with the server
+  ///create frequently asked question method
   static Future createFAQ(FAQModel faqDetails) async {
     CustomOverlay.showLoaderOverlay(duration: 6);
 
@@ -437,12 +376,12 @@ class Server extends GetxController {
     return response;
   }
 
-  ///synchronize loan application record with the server
+  ///create transaction type method
   static Future createTransactionType(
       TransactionTypeModel transactionTypeDetails) async {
     CustomOverlay.showLoaderOverlay(duration: 6);
 
-    var request = http.MultipartRequest('POST', addProfession)
+    var request = http.MultipartRequest('POST', addTransactionType)
       ..headers.addAll(
         {"Authorization": 'Bearer $accessToken'},
       )
@@ -477,7 +416,7 @@ class Server extends GetxController {
     return response;
   }
 
-  ///synchronize loan application record with the server
+  ///create salary scale method
   static Future createSalaryScale(SalaryScaleModel salaryScaleDetails) async {
     CustomOverlay.showLoaderOverlay(duration: 6);
 
@@ -516,7 +455,7 @@ class Server extends GetxController {
     return response;
   }
 
-  ///synchronize loan application record with the server
+  ///create profession method
   static Future createProfession(ProfessionModel professionDetails) async {
     CustomOverlay.showLoaderOverlay(duration: 6);
 
@@ -554,6 +493,7 @@ class Server extends GetxController {
     return response;
   }
 
+  ///accept loan application method
   Future acceptLoanService(BuildContext context, var loan) async {
     CustomOverlay.showLoaderOverlay(duration: 6);
 
@@ -581,10 +521,12 @@ class Server extends GetxController {
         Get.reset();
 
         if (json.decode(resBody)['success'] == true) {
-          Server.makeCashOut(
-              loan['phone_number'], loan['full_names'], loan['loan_amount']);
+          // Server.makeCashOut(
+          //     loan['phone_number'], loan['full_names'], loan['loan_amount']);
           CustomOverlay.showToast(
               'Loan approved Successfully', Colors.green, Colors.white);
+
+          return true;
         } else {
           CustomOverlay.showToast(
               json.decode(resBody)['message'], Colors.red, Colors.white);
@@ -601,6 +543,7 @@ class Server extends GetxController {
     }
   }
 
+  ///delete loan category method
   Future deleteLoanCategory(var loanCategoryId) async {
     CustomOverlay.showLoaderOverlay(duration: 6);
 
@@ -609,7 +552,8 @@ class Server extends GetxController {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse('$baseUrl/loan/remove_loan_category/$loanCategoryId');
+      var url =
+          Uri.parse('$baseUrl/settings/remove_loan_category/$loanCategoryId');
 
       var req = http.Request('DELETE', url);
       req.headers.addAll(headersList);
@@ -618,12 +562,6 @@ class Server extends GetxController {
       final resBody = await res.stream.bytesToString();
 
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        // reset current app state
-        await Get.deleteAll(force: true);
-// restart app
-        Phoenix.rebirth(Get.context!);
-// reset get state
-        Get.reset();
         if (json.decode(resBody)['success'] == true) {
           CustomOverlay.showToast(
               'Loan Category deleted Successfully', Colors.green, Colors.white);
@@ -641,8 +579,8 @@ class Server extends GetxController {
     }
   }
 
-  static Future updateLoanCategory(
-      LoanCategoryModel loanCategoryDetails, var loanCategoryId) async {
+  ///delete position method
+  Future deletePosition(var positionId) async {
     CustomOverlay.showLoaderOverlay(duration: 6);
 
     try {
@@ -650,18 +588,55 @@ class Server extends GetxController {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json'
       };
-      var url = Uri.parse('$baseUrl/loan/edit_loan_categories/$loanCategoryId');
+      var url = Uri.parse('$baseUrl/settings/remove_position/$positionId');
+
+      var req = http.Request('DELETE', url);
+      req.headers.addAll(headersList);
+
+      var res = await req.send();
+      final resBody = await res.stream.bytesToString();
+
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        // reset current app state
+        await Get.deleteAll(force: true);
+// restart app
+        Phoenix.rebirth(Get.context!);
+// reset get state
+        Get.reset();
+        if (json.decode(resBody)['success'] == true) {
+          CustomOverlay.showToast(
+              'Position deleted Successfully', Colors.green, Colors.white);
+        } else {
+          CustomOverlay.showToast(
+              json.decode(resBody)['message'], Colors.red, Colors.white);
+        }
+      } else {
+        print(res.reasonPhrase);
+      }
+
+      HapticFeedback.selectionClick();
+    } catch (e) {
+      CustomOverlay.showToast('Something went wrong', Colors.red, Colors.white);
+    }
+  }
+
+  ///update loan category data
+  static Future updatePosition(
+      PositionModel positionDetails, var positionId) async {
+    CustomOverlay.showLoaderOverlay(duration: 6);
+
+    try {
+      var headersList = {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json'
+      };
+      var url = Uri.parse('$baseUrl/settings/edit_position/$positionId');
 
       var body = {
-        'loan_type': loanCategoryDetails.loanType!,
-        'interest_type': loanCategoryDetails.interestType!,
-        'interest_rate': loanCategoryDetails.interestRate.toString(),
-        'term': loanCategoryDetails.term.toString(),
-        'term_period': loanCategoryDetails.termPeriod.toString(),
-        'minimum_amount': loanCategoryDetails.minAmount.toString(),
-        'maximum_amount': loanCategoryDetails.maxAmount.toString(),
-        'abbreviation': loanCategoryDetails.abbreviation!,
-        'description': loanCategoryDetails.description!,
+        'name': positionDetails.position!,
+        'level': positionDetails.level.toString(),
+        'description': positionDetails.description!,
+        'slug': positionDetails.position!.toLowerCase(),
       };
       var req = http.Request('PUT', url);
       req.headers.addAll(headersList);
@@ -690,8 +665,146 @@ class Server extends GetxController {
     }
   }
 
+  ///update loan category data
+  static Future updateLoanCategory(
+      LoanCategoryModel loanCategoryDetails, var loanCategoryId) async {
+    CustomOverlay.showLoaderOverlay(duration: 6);
+
+    try {
+      var headersList = {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json'
+      };
+      var url =
+          Uri.parse('$baseUrl/settings/edit_loan_categories/$loanCategoryId');
+
+      var body = {
+        'loan_type': loanCategoryDetails.loanType!,
+        'interest_type': loanCategoryDetails.interestType!,
+        'interest_rate': loanCategoryDetails.interestRate.toString(),
+        'term': loanCategoryDetails.term.toString(),
+        'term_period': loanCategoryDetails.termPeriod.toString(),
+        'minimum_amount': loanCategoryDetails.minAmount.toString(),
+        'maximum_amount': loanCategoryDetails.maxAmount.toString(),
+        'abbreviation': loanCategoryDetails.abbreviation!,
+        'description': loanCategoryDetails.description!,
+      };
+      var req = http.Request('PUT', url);
+      req.headers.addAll(headersList);
+      req.body = json.encode(body);
+
+      var res = await req.send();
+      final resBody = await res.stream.bytesToString();
+
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        if (json.decode(resBody)['success'] == true) {
+          CustomOverlay.showToast(
+              'Loan Category updated Successfully', Colors.green, Colors.white);
+
+          Get.back();
+        } else {
+          CustomOverlay.showToast(
+              json.decode(resBody)['message'], Colors.red, Colors.white);
+          Get.back();
+        }
+      } else {
+        print(res.reasonPhrase);
+      }
+
+      HapticFeedback.selectionClick();
+    } catch (e) {
+      CustomOverlay.showToast('Something went wrong', Colors.red, Colors.white);
+    }
+  }
+
+  ///delete loan category method
+  Future deleteTransactionType(var transactionTypeId) async {
+    CustomOverlay.showLoaderOverlay(duration: 6);
+
+    try {
+      var headersList = {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json'
+      };
+      var url = Uri.parse(
+          '$baseUrl/settings/remove_transaction_type/$transactionTypeId');
+
+      var req = http.Request('DELETE', url);
+      req.headers.addAll(headersList);
+
+      var res = await req.send();
+      final resBody = await res.stream.bytesToString();
+      print(resBody);
+
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        if (json.decode(resBody)['success'] == true) {
+          CustomOverlay.showToast('Transaction Type deleted Successfully',
+              Colors.green, Colors.white);
+        } else {
+          CustomOverlay.showToast(
+              json.decode(resBody)['message'], Colors.red, Colors.white);
+        }
+      } else {
+        print(res.reasonPhrase);
+      }
+
+      HapticFeedback.selectionClick();
+    } catch (e) {
+      CustomOverlay.showToast('Something went wrong', Colors.red, Colors.white);
+    }
+  }
+
+  ///update loan category data
+  static Future updateTransactionType(
+      TransactionTypeModel transactionTypeDetails,
+      var transactionTypeId) async {
+    CustomOverlay.showLoaderOverlay(duration: 6);
+
+    try {
+      var headersList = {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json'
+      };
+      var url = Uri.parse(
+          '$baseUrl/settings/edit_transaction_type/$transactionTypeId');
+
+      var body = {
+        'name': transactionTypeDetails.name!,
+        'description': transactionTypeDetails.description!,
+      };
+      var req = http.Request('PUT', url);
+      req.headers.addAll(headersList);
+      req.body = json.encode(body);
+
+      var res = await req.send();
+      final resBody = await res.stream.bytesToString();
+
+      print(resBody);
+
+      if (res.statusCode >= 200 && res.statusCode < 300) {
+        if (json.decode(resBody)['success'] == true) {
+          CustomOverlay.showToast('Transaction Type updated Successfully',
+              Colors.green, Colors.white);
+          Get.back();
+        } else {
+          CustomOverlay.showToast(
+              json.decode(resBody)['message'], Colors.red, Colors.white);
+          Get.back();
+        }
+      } else {
+        print(res.reasonPhrase);
+      }
+
+      HapticFeedback.selectionClick();
+    } catch (e) {
+      CustomOverlay.showToast('Something went wrong', Colors.red, Colors.white);
+    }
+  }
+
+  ///decline loan application
   Future declineLoanService(var loanId) async {
     CustomOverlay.showLoaderOverlay(duration: 6);
+    var loanController = Get.put(LoanController());
 
     try {
       var headersList = {
@@ -707,8 +820,17 @@ class Server extends GetxController {
 
       var res = await req.send();
       final resBody = await res.stream.bytesToString();
-
+      print(json.decode(resBody));
       if (res.statusCode >= 200 && res.statusCode < 300) {
+        // reset current app state
+        await Get.deleteAll(force: true);
+// restart app
+        Phoenix.rebirth(Get.context!);
+// reset get state
+        Get.reset();
+
+        // loanController.loanApplications.removeAt(loanId);
+        print(json.decode(resBody));
         if (json.decode(resBody)['success'] == true) {
           CustomOverlay.showToast(
               'Loan declined Successfully', Colors.green, Colors.white);
@@ -726,7 +848,7 @@ class Server extends GetxController {
     }
   }
 
-  Future fetchData() async {
+  static Future fetchData() async {
     HapticFeedback.selectionClick();
 
     var request = http.MultipartRequest('GET', dashboardUrl)
@@ -734,11 +856,10 @@ class Server extends GetxController {
 
     var response = await request.send();
     final message = await http.Response.fromStream(response);
-
-    if (json.decode(message.body)['success'] == true) {
-      return json.decode(message.body);
-    }
-    return response;
+    log(json.decode(message.body).toString());
+    return json.decode(message.body)['success']
+        ? json.decode(message.body)['payload']
+        : [];
   }
 
   static Future fetchPositions() async {
@@ -756,7 +877,7 @@ class Server extends GetxController {
     return response;
   }
 
-  static Future fetchLoans() async {
+  static fetchLoans() async {
     HapticFeedback.selectionClick();
 
     var request = http.MultipartRequest('GET', allLoansUrl)
@@ -765,10 +886,9 @@ class Server extends GetxController {
     var response = await request.send();
     final message = await http.Response.fromStream(response);
 
-    if (json.decode(message.body)['success'] == true) {
-      return json.decode(message.body);
-    }
-    return response;
+    return json.decode(message.body)['success']
+        ? json.decode(message.body)['payload']
+        : [];
   }
 
   static Future fetchTransactions() async {
@@ -824,11 +944,10 @@ class Server extends GetxController {
 
     var response = await request.send();
     final message = await http.Response.fromStream(response);
-    print(json.decode(message.body));
-    if (json.decode(message.body)['success'] == true) {
-      return json.decode(message.body)['payload'];
-    }
-    return response;
+
+    return json.decode(message.body)['success']
+        ? json.decode(message.body)['payload']
+        : [];
   }
 
   static Future fetchAdminUsers() async {
@@ -927,13 +1046,5 @@ class Server extends GetxController {
       return json.decode(message.body);
     }
     return response;
-  }
-
-  static dashUpdate(var obj) async {
-    {
-      GetStorage().write('dashData', obj);
-
-      // preference.setString('dashboardJson', obj);
-    }
   }
 }

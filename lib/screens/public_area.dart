@@ -50,7 +50,9 @@ class _PublicAreaState extends State<PublicArea> with TickerProviderStateMixin {
             children: [
               FutureBuilder(
                   future: Future.wait(
-                      [Server.fetchAllLoanCategories(), Server.fetchLoans()]),
+                      [Server.fetchAllLoanCategories(),
+                      // Server.fetchLoans()
+                      ]),
                   builder: (context, AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const LoadingData();

@@ -1,3 +1,11 @@
+String closeWarning =
+    'You are closing without editing/saving changes. You may lose changes and they cannot be retrieved/reversed';
+String closePrompt = 'Do you wish to close?';
+
+String deletePrompt = 'Do you wish to delete?';
+String deleteLoanWarning =
+    'You are deleting this loan category and this action is not reversible, this information will not be available for other users. Confirm action to delete';
+
 var loanCategory = [
   {"asset": "car.svg", "category": "Emergency Loan"},
   {"asset": "school.svg", "category": "School Loan"},

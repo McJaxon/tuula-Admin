@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
@@ -9,10 +7,10 @@ class PercentageCard extends StatelessWidget {
       {Key? key,
       required this.dashController,
       required this.index,
-      required this.snapshot})
+      })
       : super(key: key);
 
-  final dashController, index, snapshot;
+  final dashController, index;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +27,8 @@ class PercentageCard extends StatelessWidget {
                   top: 20.0,
                   left: 20.0,
                   child: Text(
-                    snapshot.data['payload']['loan_stats']['percentages'][index]
+                    dashController.dashBoardData
+                    ['loan_stats']['percentages'][index]
                         ['category'],
                     style: TextStyle(
                         fontFamily: 'Poppins',
@@ -61,7 +60,7 @@ class PercentageCard extends StatelessWidget {
                                         mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
                                           Text(
-                                            snapshot.data['payload']
+                                          dashController.dashBoardData
                                                     ['loan_stats']
                                                     ['percentages'][index]
                                                     ['value']
@@ -86,8 +85,7 @@ class PercentageCard extends StatelessWidget {
                                 ],
                                 pointers: <GaugePointer>[
                                   RangePointer(
-                                      value: double.parse(snapshot
-                                          .data['payload']['loan_stats']
+                                      value: double.parse(dashController.dashBoardData['loan_stats']
                                               ['percentages'][index]['value']
                                           .toString()),
                                       cornerStyle: CornerStyle.bothCurve,
@@ -166,10 +164,10 @@ class PercentageCard extends StatelessWidget {
               SizedBox(
                 width: 14.w,
               ),
-              Text(
-                '${dashController.currentCard}/${snapshot.data['payload']['loan_stats']['percentages'].length}',
-                style: TextStyle(fontFamily: 'Poppins', fontSize: 15.sp),
-              )
+              // Text(
+              //   '${dashController.currentCard}/${snapshot.data['payload']['loan_stats']['percentages'].length}',
+              //   style: TextStyle(fontFamily: 'Poppins', fontSize: 15.sp),
+              // )
             ],
           ),
         ),

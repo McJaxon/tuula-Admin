@@ -53,7 +53,7 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
               FutureBuilder(
                   future: Future.wait([
                     Server.fetchAdminUsers(),
-                    Server.fetchLoans(),
+                    // Server.fetchLoans(),
                     Server.fetchPositions()
                   ]),
                   builder: (context, AsyncSnapshot snapshot) {
@@ -302,7 +302,7 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                                 ListView.builder(
                                   padding: EdgeInsets.only(
                                       top: 240.h, bottom: 200.h),
-                                  itemCount: snapshot.data[2].length,
+                                  itemCount: snapshot.data[1].length,
                                   itemBuilder: ((context, index) {
                                     return Padding(
                                       padding: const EdgeInsets.all(8.0),
@@ -327,7 +327,7 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                                                               .start,
                                                       children: [
                                                         Text(
-                                                          snapshot.data[2]
+                                                          snapshot.data[1]
                                                               [index]['name'],
                                                           style: TextStyle(
                                                               color: Colors
@@ -361,7 +361,7 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                                                               width: 10.w,
                                                             ),
                                                             Text(
-                                                              snapshot.data[2]
+                                                              snapshot.data[1]
                                                                       [index]
                                                                   ['slug'],
                                                               style: TextStyle(
@@ -385,7 +385,7 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                                                   height: 4.h,
                                                 ),
                                                 Text(
-                                                  snapshot.data[2][index]
+                                                  snapshot.data[1][index]
                                                       ['description'],
                                                   style: TextStyle(
                                                       color: Colors.black,
@@ -412,7 +412,7 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                                                       width: 10.w,
                                                     ),
                                                     Text(
-                                                      snapshot.data[2][index]
+                                                      snapshot.data[1][index]
                                                               ['level']
                                                           .toString(),
                                                       style: TextStyle(

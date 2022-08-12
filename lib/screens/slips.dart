@@ -25,7 +25,7 @@ class _SlipsState extends State<Slips> {
           ),
           child: IconButton(
             onPressed: () {
-              homeController.showHelpDialog(context);
+              // homeController.showHelpDialog(context);
             },
             icon: const Icon(Icons.question_mark, color: Colors.white70),
           )),

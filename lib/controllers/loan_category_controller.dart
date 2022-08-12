@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:admin_banja/constants/strings.dart';
 import 'package:admin_banja/services/server.dart';
 import 'package:admin_banja/utils/customOverlay.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 
 import '../models/loan_category.dart';
 
@@ -25,9 +25,9 @@ class LoanCategory extends GetxController {
 
   var refreshState = false.obs;
 
-  confirmLoanTypeDelete(BuildContext context, var categoryID) {
+  Future confirmLoanTypeDelete(BuildContext context, var categoryID) {
     refreshState(false);
-    showDialog(
+    return showDialog(
         context: context,
         builder: (context) {
           return Dialog(
@@ -42,8 +42,8 @@ class LoanCategory extends GetxController {
                 padding: EdgeInsets.all(15.w),
                 child: Column(
                   children: [
-                    const Text('Do you wish to delete?',
-                        style: TextStyle(
+                    Text(deletePrompt,
+                        style: const TextStyle(
                             fontFamily: 'Poppins',
                             color: Colors.black,
                             fontWeight: FontWeight.w600)),
@@ -51,7 +51,7 @@ class LoanCategory extends GetxController {
                       height: 20.h,
                     ),
                     Text(
-                      'You are deleting this loan category and this action is not reversible, this information will not be available for other users. Confirm action to delete',
+                      deleteLoanWarning,
                       style:
                           TextStyle(fontFamily: 'Poppins', fontSize: 14.5.sp),
                       textAlign: TextAlign.center,
@@ -118,7 +118,7 @@ class LoanCategory extends GetxController {
         });
   }
 
-  showEditLoanSheet(BuildContext context, var data) {
+  Future showEditLoanSheet(BuildContext context, var data) {
     HapticFeedback.lightImpact();
     final loanType = TextEditingController(text: data['loan_type']);
     final abbreviation = TextEditingController(text: data['abbreviation']);
@@ -170,8 +170,8 @@ class LoanCategory extends GetxController {
                                       padding: EdgeInsets.all(15.w),
                                       child: Column(
                                         children: [
-                                          const Text('Do you wish to close?',
-                                              style: TextStyle(
+                                          Text(closePrompt,
+                                              style: const TextStyle(
                                                   fontFamily: 'Poppins',
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.w600)),
@@ -179,7 +179,7 @@ class LoanCategory extends GetxController {
                                             height: 20.h,
                                           ),
                                           Text(
-                                            'You are closing without editing/saving changes. You may have limited access until you finish setting up your profile',
+                                            closeWarning,
                                             style: TextStyle(
                                                 fontFamily: 'Poppins',
                                                 fontSize: 13.5.sp),
@@ -284,7 +284,7 @@ class LoanCategory extends GetxController {
                                   physics: const BouncingScrollPhysics(),
                                   children: [
                                     Text(
-                                      'What is the Loan type',
+                                      'What is the Loan type?',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16.8.sp),
@@ -318,7 +318,7 @@ class LoanCategory extends GetxController {
                                       height: 20.h,
                                     ),
                                     Text(
-                                      'What is Loan Abbreviation',
+                                      'What is Loan Abbreviation?',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16.8.sp),
@@ -334,12 +334,12 @@ class LoanCategory extends GetxController {
                                           color: Colors.white),
                                       child: TextFormField(
                                         controller: abbreviation,
-                                        ////validator: FieldValidator.validateEmail,
+
                                         keyboardType:
                                             TextInputType.emailAddress,
                                         decoration: InputDecoration(
                                             hintText:
-                                                'Write name short form eg. EL',
+                                                'Write loan type short form eg. EL',
                                             hintStyle:
                                                 TextStyle(fontSize: 17.sp),
                                             contentPadding:
@@ -352,7 +352,7 @@ class LoanCategory extends GetxController {
                                       height: 20.h,
                                     ),
                                     Text(
-                                      'What is Loan Description',
+                                      'Briefly describe the loan type',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16.8.sp),
@@ -361,13 +361,14 @@ class LoanCategory extends GetxController {
                                       height: 6.h,
                                     ),
                                     Container(
-                                      height: 80.h,
+
                                       decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(10.r),
                                           color: Colors.white),
                                       child: TextFormField(
                                         controller: description,
+                                        maxLines: 6,
                                         textCapitalization:
                                             TextCapitalization.sentences,
                                         keyboardType: TextInputType.text,
@@ -386,7 +387,7 @@ class LoanCategory extends GetxController {
                                       height: 20.h,
                                     ),
                                     Text(
-                                      'What is the minimum amount',
+                                      'What is the minimum amount?',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16.8.sp),
@@ -419,7 +420,7 @@ class LoanCategory extends GetxController {
                                       height: 20.h,
                                     ),
                                     Text(
-                                      'What is maximum Loan Amount',
+                                      'What is maximum Loan Amount?',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16.8.sp),
@@ -453,7 +454,7 @@ class LoanCategory extends GetxController {
                                       height: 20.h,
                                     ),
                                     Text(
-                                      'What is the loan period',
+                                      'What is the loan period?',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16.8.sp),
@@ -487,7 +488,7 @@ class LoanCategory extends GetxController {
                                       height: 20.h,
                                     ),
                                     Text(
-                                      'What is the interest rate',
+                                      'What is the interest rate?',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16.8.sp),
@@ -521,7 +522,7 @@ class LoanCategory extends GetxController {
                                       height: 20.h,
                                     ),
                                     Text(
-                                      'What is interest type',
+                                      'What is interest type?',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16.8.sp),
@@ -591,7 +592,7 @@ class LoanCategory extends GetxController {
                                     minAmount: int.parse(minimumAmount.text),
                                     term: 5,
                                     termPeriod: int.parse(termPeriod.text));
-                                //print(loaCategory.toMap());
+
                                 Server.updateLoanCategory(
                                     loaCategory, data['id']);
                                 refreshState(true);
@@ -613,7 +614,7 @@ class LoanCategory extends GetxController {
                                           color: Colors.white,
                                           fontSize: 18.sp),
                                     ),
-                                    //    Spacer(),
+
                                   ]),
                             ),
                           ),
@@ -672,8 +673,8 @@ class LoanCategory extends GetxController {
                                       padding: EdgeInsets.all(15.w),
                                       child: Column(
                                         children: [
-                                          const Text('Do you wish to close?',
-                                              style: TextStyle(
+                                          Text(closePrompt,
+                                              style: const TextStyle(
                                                   fontFamily: 'Poppins',
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.w600)),
@@ -681,7 +682,7 @@ class LoanCategory extends GetxController {
                                             height: 20.h,
                                           ),
                                           Text(
-                                            'You are closing without editing/saving changes. You may have limited access until you finish setting up your profile',
+                                            closeWarning                                           ,
                                             style: TextStyle(
                                                 fontFamily: 'Poppins',
                                                 fontSize: 13.5.sp),
@@ -786,7 +787,7 @@ class LoanCategory extends GetxController {
                                   physics: const BouncingScrollPhysics(),
                                   children: [
                                     Text(
-                                      'What is the Loan type',
+                                      'What is the Loan type?',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16.8.sp),
@@ -820,7 +821,7 @@ class LoanCategory extends GetxController {
                                       height: 20.h,
                                     ),
                                     Text(
-                                      'What is Loan Abbreviation',
+                                      'What is the Loan Abbreviation?',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16.8.sp),
@@ -841,7 +842,7 @@ class LoanCategory extends GetxController {
                                             TextInputType.emailAddress,
                                         decoration: InputDecoration(
                                             hintText:
-                                                'Write name short form eg. EL',
+                                                'Write loan type short form eg. EL',
                                             hintStyle:
                                                 TextStyle(fontSize: 17.sp),
                                             contentPadding:
@@ -854,7 +855,7 @@ class LoanCategory extends GetxController {
                                       height: 20.h,
                                     ),
                                     Text(
-                                      'What is Loan Description',
+                                      'Briefly describe the loan type',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16.8.sp),
@@ -863,15 +864,16 @@ class LoanCategory extends GetxController {
                                       height: 6.h,
                                     ),
                                     Container(
-                                      height: 80.h,
+                                      //height: 80.h,
                                       decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(10.r),
                                           color: Colors.white),
                                       child: TextFormField(
+                                        maxLines: 6,
                                         controller: _description,
                                         textCapitalization:
-                                            TextCapitalization.words,
+                                            TextCapitalization.sentences,
                                         keyboardType: TextInputType.text,
                                         decoration: InputDecoration(
                                             hintText:
@@ -880,6 +882,7 @@ class LoanCategory extends GetxController {
                                                 TextStyle(fontSize: 17.sp),
                                             contentPadding:
                                                 EdgeInsets.symmetric(
+                                                    vertical: 15.h,
                                                     horizontal: 20.w),
                                             border: InputBorder.none),
                                       ),
@@ -888,7 +891,7 @@ class LoanCategory extends GetxController {
                                       height: 20.h,
                                     ),
                                     Text(
-                                      'What is the minimum amount',
+                                      'What is the minimum amount?',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16.8.sp),
@@ -921,7 +924,7 @@ class LoanCategory extends GetxController {
                                       height: 20.h,
                                     ),
                                     Text(
-                                      'What is maximum Loan Amount',
+                                      'What is maximum Loan Amount?',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16.8.sp),
@@ -955,7 +958,7 @@ class LoanCategory extends GetxController {
                                       height: 20.h,
                                     ),
                                     Text(
-                                      'What is the loan period',
+                                      'What is the loan period?',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16.8.sp),
@@ -976,7 +979,7 @@ class LoanCategory extends GetxController {
                                         keyboardType: TextInputType.number,
                                         decoration: InputDecoration(
                                             hintText:
-                                                'highest loan lend out amount',
+                                                'indicate loan tenure period',
                                             hintStyle:
                                                 TextStyle(fontSize: 17.sp),
                                             contentPadding:
@@ -989,7 +992,7 @@ class LoanCategory extends GetxController {
                                       height: 20.h,
                                     ),
                                     Text(
-                                      'What is the interest rate',
+                                      'What is the interest rate?',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16.8.sp),
@@ -1010,7 +1013,7 @@ class LoanCategory extends GetxController {
                                         keyboardType: TextInputType.number,
                                         decoration: InputDecoration(
                                             hintText:
-                                                'highest loan lend out amount',
+                                                'type in the interest rate the loan attracts',
                                             hintStyle:
                                                 TextStyle(fontSize: 17.sp),
                                             contentPadding:
@@ -1023,7 +1026,7 @@ class LoanCategory extends GetxController {
                                       height: 20.h,
                                     ),
                                     Text(
-                                      'What is interest type',
+                                      'What is interest type?',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 16.8.sp),
@@ -1044,7 +1047,7 @@ class LoanCategory extends GetxController {
                                         keyboardType: TextInputType.number,
                                         decoration: InputDecoration(
                                             hintText:
-                                                'what kind on interest is this ed. Accrual',
+                                                'what kind on interest is this eg. Accrual',
                                             hintStyle:
                                                 TextStyle(fontSize: 17.sp),
                                             contentPadding:

@@ -1,3 +1,4 @@
+import 'package:admin_banja/services/server.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,7 +10,21 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 class DashboardController extends GetxController {
-  //var dashData = GetStorage().read('dashData');
+  var dashBoardData = {}.obs;
+
+  getDashData() async {
+    if (GetStorage().read('accessToken') != null) {
+      dashBoardData.value = await Server.fetchData();
+    }
+  }
+
+  @override
+  void onInit() {
+    getDashData();
+
+    super.onInit();
+  }
+
   final sliderKey = GlobalKey<SliderDrawerState>();
   List<BottomNavigationBarItem> navigationBarItems = const [
     BottomNavigationBarItem(icon: Icon(CupertinoIcons.home), label: 'Dash'),

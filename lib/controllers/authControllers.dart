@@ -1,13 +1,9 @@
 import 'package:admin_banja/constants/styles.dart';
-
-import 'package:admin_banja/utils/customOverlay.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 
 class AuthController extends GetxController {
   TextEditingController nationalID = TextEditingController();

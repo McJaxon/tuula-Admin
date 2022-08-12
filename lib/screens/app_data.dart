@@ -25,13 +25,12 @@ class AppData extends StatefulWidget {
 class _AppDataState extends State<AppData> with TickerProviderStateMixin {
   late TabController tabController;
   PageController controller = PageController();
-  int tabCurrentPage = 0;
-  var currentIndex = 0;
   PageController tabPageController = PageController();
+  int tabCurrentPage = 0;
 
+  var currentIndex = 0;
   var loanCategoryController = Get.put(LoanCategory());
   var faqController = Get.put(FaqController());
-
   var transactionTypeController = Get.put(TransactionTypeController());
   var professionController = Get.put(ProfessionController());
   var salaryController = Get.put(SalaryScaleController());
@@ -77,7 +76,7 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                         PageView(
                           controller: tabPageController,
                           onPageChanged: (page) {
-                            tabController.animateTo(page.toInt());
+                            //tabController.animateTo(page.toInt());
                           },
                           children: [
                             Stack(
@@ -449,10 +448,7 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                                                           [
                                                                           'payload']
                                                                       [
-                                                                      index]['id'])
-                                                              .then((value) {
-                                                            setState(() {});
-                                                          });
+                                                                      index]['id']);
                                                         },
                                                       ),
                                                     ),
@@ -607,17 +603,17 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                                                   'Poppins'),
                                                         ),
                                                         onPressed: () {
-                                                          // loanCategoryController
-                                                          //     .showEditLoanSheet(
-                                                          //         context,
-                                                          //         snapshot.data[
-                                                          //                     0]
-                                                          //                 [
-                                                          //                 'payload']
-                                                          //             [index])
-                                                          //     .then((value) {
-                                                          //   setState(() {});
-                                                          // });
+                                                          transactionTypeController
+                                                              .showEditTransactionTypeSheet(
+                                                                  context,
+                                                                  snapshot.data[
+                                                                              2]
+                                                                          [
+                                                                          'payload']
+                                                                      [index])
+                                                              .then((value) {
+                                                            setState(() {});
+                                                          });
                                                         },
                                                       ),
                                                     ),
@@ -633,18 +629,18 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                                                                   'Poppins'),
                                                         ),
                                                         onPressed: () {
-                                                          // loanCategoryController
-                                                          //     .confirmLoanTypeDelete(
-                                                          //         context,
-                                                          //         snapshot.data[
-                                                          //                     0]
-                                                          //                 [
-                                                          //                 'payload']
-                                                          //             [
-                                                          //             index]['id'])
-                                                          //     .then((value) {
-                                                          //   setState(() {});
-                                                          // });
+                                                          transactionTypeController
+                                                              .confirmTransactionTypeDelete(
+                                                                  context,
+                                                                  snapshot.data[
+                                                                              2]
+                                                                          [
+                                                                          'payload']
+                                                                      [
+                                                                      index]['id'])
+                                                              .then((value) {
+                                                            setState(() {});
+                                                          });
                                                         },
                                                       ),
                                                     ),
@@ -1234,7 +1230,6 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                         controller: tabController,
                         onTap: (int page) {
                           tabCurrentPage = page;
-
                           tabPageController.animateToPage(tabCurrentPage,
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.easeIn);
@@ -1322,7 +1317,6 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
                         ),
                         onPressed: () {
                           HapticFeedback.lightImpact();
-
                           Navigator.pop(context);
                         },
                       ),
