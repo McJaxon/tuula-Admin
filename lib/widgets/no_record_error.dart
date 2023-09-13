@@ -10,11 +10,10 @@ class NoRecordError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          EdgeInsets.only(top: 245.h, left: 25.w, right: 25.w),
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      padding: EdgeInsets.only(top: 245.h, left: 25.w, right: 25.w),
+      child: ListView(
+        children: [
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
               'You currently have no records here!',
               style: TextStyle(
@@ -24,6 +23,8 @@ class NoRecordError extends StatelessWidget {
             ),
             Lottie.asset('assets/lotties/no-search-result.json'),
           ]),
+        ],
+      ),
     );
   }
 }

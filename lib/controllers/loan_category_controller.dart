@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:admin_banja/constants/strings.dart';
 import 'package:admin_banja/services/server.dart';
 import 'package:admin_banja/utils/customOverlay.dart';
@@ -17,6 +15,7 @@ class LoanCategory extends GetxController {
   final TextEditingController _abbreviation = TextEditingController();
   final TextEditingController _interestRate = TextEditingController();
   final TextEditingController _interestType = TextEditingController();
+  // ignore: unused_field
   final TextEditingController _term = TextEditingController();
   final TextEditingController _termPeriod = TextEditingController();
   final TextEditingController _minimumAmount = TextEditingController();
@@ -66,6 +65,11 @@ class LoanCategory extends GetxController {
                             },
                             child: Container(
                               height: 55.h,
+                              decoration: BoxDecoration(
+                                  color: Colors.red.shade400,
+                                  borderRadius: BorderRadius.circular(
+                                    10.r,
+                                  )),
                               child: const Center(
                                   child: Text(
                                 'NO',
@@ -74,11 +78,6 @@ class LoanCategory extends GetxController {
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500),
                               )),
-                              decoration: BoxDecoration(
-                                  color: Colors.red.shade400,
-                                  borderRadius: BorderRadius.circular(
-                                    10.r,
-                                  )),
                             ),
                           ),
                         ),
@@ -94,17 +93,17 @@ class LoanCategory extends GetxController {
                             },
                             child: Container(
                               height: 55.h,
+                              decoration: BoxDecoration(
+                                  color: Colors.green.shade400,
+                                  borderRadius: BorderRadius.circular(
+                                    10.r,
+                                  )),
                               child: const Center(
                                   child: Text('YES',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           color: Colors.white,
                                           fontWeight: FontWeight.w600))),
-                              decoration: BoxDecoration(
-                                  color: Colors.green.shade400,
-                                  borderRadius: BorderRadius.circular(
-                                    10.r,
-                                  )),
                             ),
                           ),
                         )
@@ -195,6 +194,14 @@ class LoanCategory extends GetxController {
                                                   },
                                                   child: Container(
                                                     height: 55.h,
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Colors.red.shade400,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10.r,
+                                                        )),
                                                     child: const Center(
                                                         child: Text(
                                                       'NO',
@@ -204,14 +211,6 @@ class LoanCategory extends GetxController {
                                                           fontWeight:
                                                               FontWeight.w500),
                                                     )),
-                                                    decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.red.shade400,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          10.r,
-                                                        )),
                                                   ),
                                                 ),
                                               ),
@@ -226,6 +225,14 @@ class LoanCategory extends GetxController {
                                                   },
                                                   child: Container(
                                                     height: 55.h,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors
+                                                            .green.shade400,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10.r,
+                                                        )),
                                                     child: const Center(
                                                         child: Text('YES',
                                                             style: TextStyle(
@@ -236,14 +243,6 @@ class LoanCategory extends GetxController {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600))),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors
-                                                            .green.shade400,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          10.r,
-                                                        )),
                                                   ),
                                                 ),
                                               )
@@ -334,7 +333,6 @@ class LoanCategory extends GetxController {
                                           color: Colors.white),
                                       child: TextFormField(
                                         controller: abbreviation,
-
                                         keyboardType:
                                             TextInputType.emailAddress,
                                         decoration: InputDecoration(
@@ -361,7 +359,6 @@ class LoanCategory extends GetxController {
                                       height: 6.h,
                                     ),
                                     Container(
-
                                       decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(10.r),
@@ -614,7 +611,6 @@ class LoanCategory extends GetxController {
                                           color: Colors.white,
                                           fontSize: 18.sp),
                                     ),
-
                                   ]),
                             ),
                           ),
@@ -682,7 +678,7 @@ class LoanCategory extends GetxController {
                                             height: 20.h,
                                           ),
                                           Text(
-                                            closeWarning                                           ,
+                                            closeWarning,
                                             style: TextStyle(
                                                 fontFamily: 'Poppins',
                                                 fontSize: 13.5.sp),
@@ -698,6 +694,14 @@ class LoanCategory extends GetxController {
                                                   },
                                                   child: Container(
                                                     height: 55.h,
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Colors.red.shade400,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10.r,
+                                                        )),
                                                     child: const Center(
                                                         child: Text(
                                                       'NO',
@@ -707,14 +711,6 @@ class LoanCategory extends GetxController {
                                                           fontWeight:
                                                               FontWeight.w500),
                                                     )),
-                                                    decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.red.shade400,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          10.r,
-                                                        )),
                                                   ),
                                                 ),
                                               ),
@@ -729,6 +725,14 @@ class LoanCategory extends GetxController {
                                                   },
                                                   child: Container(
                                                     height: 55.h,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors
+                                                            .green.shade400,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10.r,
+                                                        )),
                                                     child: const Center(
                                                         child: Text('YES',
                                                             style: TextStyle(
@@ -739,14 +743,6 @@ class LoanCategory extends GetxController {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600))),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors
-                                                            .green.shade400,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          10.r,
-                                                        )),
                                                   ),
                                                 ),
                                               )

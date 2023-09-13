@@ -10,7 +10,6 @@ class TextBox extends StatefulWidget {
       this.maxLength,
       this.validator,
       required this.textEditingController,
-
       required this.title,
       required this.hint})
       : super(key: key);
@@ -36,47 +35,50 @@ class _TextBoxState extends State<TextBox> {
       children: [
         Text(widget.title,
             style: TextStyle(
-                fontSize: 17.sp,
+                fontSize: 15.sp,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w500)),
         SizedBox(
           height: 7.h,
         ),
         Container(
-            height: 60.h,
+            // height: 50.h,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50.r),
+                borderRadius: BorderRadius.circular(6.r),
                 color: const Color(0xffF2F2F2)),
-            child: TextFormField(
-              obscureText: widget.isPassword,
-              validator: widget.validator,
-              textCapitalization: widget.textCapitalization!,
-              
-              controller: widget.textEditingController,
-              keyboardType: widget.textInputType,
-              maxLength: widget.maxLength,
-              decoration: InputDecoration(
-                  suffixText: widget.maxLength != null
-                      ? '${widget.textEditingController.text.length}/${widget.maxLength}'
-                      : '',
-                  suffixStyle: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w800,
-                  ),
-                  counterText: '',
-                  prefixText: widget.maxLength == 9 ? '+256' : '',
-                  prefixStyle: TextStyle(
+            child: Padding(
+              padding: EdgeInsets.all(10.h),
+              child: TextFormField(
+                obscureText: widget.isPassword,
+                validator: widget.validator,
+                textCapitalization: widget.textCapitalization!,
+                controller: widget.textEditingController,
+                keyboardType: widget.textInputType,
+                maxLength: widget.maxLength,
+                decoration: InputDecoration(
+                    suffixText: widget.maxLength != null
+                        ? '${widget.textEditingController.text.length}/${widget.maxLength}'
+                        : '',
+                    suffixStyle: const TextStyle(
                       fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 18.5.sp),
-                  hintText: widget.hint,
-                  hintStyle: TextStyle(
-                      fontSize: 17.sp, color: Color.fromARGB(255, 125, 122, 122)),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20.w)),
-              onChanged: (value) {
-                setState(() {});
-              },
+                      fontWeight: FontWeight.w800,
+                    ),
+                    counterText: '',
+                    prefixText: widget.maxLength == 9 ? '+256' : '',
+                    prefixStyle: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15.sp),
+                    hintText: widget.hint,
+                    hintStyle: TextStyle(
+                        fontSize: 15.sp,
+                        color: const Color.fromARGB(255, 125, 122, 122)),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 3.w)),
+                onChanged: (value) {
+                  setState(() {});
+                },
+              ),
             )),
       ],
     );

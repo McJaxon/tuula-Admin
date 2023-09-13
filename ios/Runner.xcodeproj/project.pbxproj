@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		2D6FE58F174FD82A26A27C7A /* GoogleService-Info.plist in Sources */ = {isa = PBXBuildFile; fileRef = 0F23696DDEB59B6E0A9F1E9B /* GoogleService-Info.plist */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		3E7DB846F0AE8A431B85C5DE /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4BC6E0E1AF5EA8271737F2D9 /* Pods_Runner.framework */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
@@ -30,6 +31,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0F23696DDEB59B6E0A9F1E9B /* GoogleService-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "Runner/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0F2DEE6497D9B3AD7D85207F /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 				97C146EF1CF9000F007C117D /* Products */,
 				4E9AB7A6479619FE5E4958CB /* Pods */,
 				0E954D43F9006B1360062FA9 /* Frameworks */,
+				0F23696DDEB59B6E0A9F1E9B /* GoogleService-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -273,6 +276,7 @@
 			files = (
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
+				2D6FE58F174FD82A26A27C7A /* GoogleService-Info.plist in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

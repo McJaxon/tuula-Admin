@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:admin_banja/controllers/homePageController.dart';
+import 'package:admin_banja/controllers/home_page_controller.dart';
 import 'package:admin_banja/services/server.dart';
 import 'package:admin_banja/widgets/loading_indicator.dart';
 import 'package:admin_banja/widgets/network_error.dart';
@@ -42,80 +42,80 @@ class _RecordsPageState extends State<PaymentsPage> {
                     ),
                     child: Stack(
                       children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  // Text(
-                                  //   'There are currently no payments made',
-                                  //   style: TextStyle(
-                                  //       color: Colors.black87,
-                                  //       fontFamily: 'Poppins',
-                                  //       fontWeight: FontWeight.w400,
-                                  //       fontSize: 20.sp),
-                                  // ),
-                                  // Text(
-                                  //   'UGX ' +
-                                  //       snapshot.data['loan_amount']
-                                  //           .toString() +
-                                  //       '/=',
-                                  //   style: TextStyle(
-                                  //       color: Colors.black87,
-                                  //       fontFamily: 'Poppins',
-                                  //       fontWeight: FontWeight.w600,
-                                  //       fontSize: 20.sp),
-                                  // ),
-                                ],
-                              ),
-                              // Row(
-                              //   children: [
-                              //     Text(
-                              //       'Total Amount Paid: ',
-                              //       style: TextStyle(
-                              //           color: Colors.black87,
-                              //           fontFamily: 'Poppins',
-                              //           fontWeight: FontWeight.w500,
-                              //           fontSize: 20.sp),
-                              //     ),
-                              //     Text(
-                              //       'UGX ' + snapshot.data['total_paid'] + '/=',
-                              //       style: TextStyle(
-                              //           color: Colors.black87,
-                              //           fontFamily: 'Poppins',
-                              //           fontWeight: FontWeight.w600,
-                              //           fontSize: 20.sp),
-                              //     ),
-                              //   ],
-                              // ),
-                              // const Divider(),
-                              // Row(
-                              //   children: [
-                              //     Text(
-                              //       'Balance: ',
-                              //       style: TextStyle(
-                              //           color: Colors.black87,
-                              //           fontFamily: 'Poppins',
-                              //           fontWeight: FontWeight.w500,
-                              //           fontSize: 24.sp),
-                              //     ),
-                              //     Text(
-                              //       'UGX ' +
-                              //           snapshot.data['outstanding_balance']
-                              //               .toString() +
-                              //           '/=',
-                              //       style: TextStyle(
-                              //           color: Colors.black87,
-                              //           fontFamily: 'Poppins',
-                              //           fontWeight: FontWeight.w600,
-                              //           fontSize: 24.sp),
-                              //     ),
-                              //   ],
-                              // ),
-                            ],
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        //   child: Column(
+                        //     children: [
+                        //       Row(
+                        //         children: [
+                        //           // Text(
+                        //           //   'There are currently no payments made',
+                        //           //   style: TextStyle(
+                        //           //       color: Colors.black87,
+                        //           //       fontFamily: 'Poppins',
+                        //           //       fontWeight: FontWeight.w400,
+                        //           //       fontSize: 20.sp),
+                        //           // ),
+                        //           // Text(
+                        //           //   'UGX ' +
+                        //           //       snapshot.data['loan_amount']
+                        //           //           .toString() +
+                        //           //       '/=',
+                        //           //   style: TextStyle(
+                        //           //       color: Colors.black87,
+                        //           //       fontFamily: 'Poppins',
+                        //           //       fontWeight: FontWeight.w600,
+                        //           //       fontSize: 20.sp),
+                        //           // ),
+                        //         ],
+                        //       ),
+                        //       // Row(
+                        //       //   children: [
+                        //       //     Text(
+                        //       //       'Total Amount Paid: ',
+                        //       //       style: TextStyle(
+                        //       //           color: Colors.black87,
+                        //       //           fontFamily: 'Poppins',
+                        //       //           fontWeight: FontWeight.w500,
+                        //       //           fontSize: 20.sp),
+                        //       //     ),
+                        //       //     Text(
+                        //       //       'UGX ' + snapshot.data['total_paid'] + '/=',
+                        //       //       style: TextStyle(
+                        //       //           color: Colors.black87,
+                        //       //           fontFamily: 'Poppins',
+                        //       //           fontWeight: FontWeight.w600,
+                        //       //           fontSize: 20.sp),
+                        //       //     ),
+                        //       //   ],
+                        //       // ),
+                        //       // const Divider(),
+                        //       // Row(
+                        //       //   children: [
+                        //       //     Text(
+                        //       //       'Balance: ',
+                        //       //       style: TextStyle(
+                        //       //           color: Colors.black87,
+                        //       //           fontFamily: 'Poppins',
+                        //       //           fontWeight: FontWeight.w500,
+                        //       //           fontSize: 24.sp),
+                        //       //     ),
+                        //       //     Text(
+                        //       //       'UGX ' +
+                        //       //           snapshot.data['outstanding_balance']
+                        //       //               .toString() +
+                        //       //           '/=',
+                        //       //       style: TextStyle(
+                        //       //           color: Colors.black87,
+                        //       //           fontFamily: 'Poppins',
+                        //       //           fontWeight: FontWeight.w600,
+                        //       //           fontSize: 24.sp),
+                        //       //     ),
+                        //       //   ],
+                        //       // ),
+                        //     ],
+                        //   ),
+                        // ),
                         Padding(
                           padding: EdgeInsets.only(top: 95.h),
                           child: ListView.builder(
@@ -232,13 +232,9 @@ class _RecordsPageState extends State<PaymentsPage> {
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 18.sp),
                                               ),
-                                              Spacer(),
+                                              const Spacer(),
                                               Text(
-                                                'UGX' +
-                                                    snapshot.data[index]
-                                                            ['charged_amount']
-                                                        .toString() +
-                                                    '/=',
+                                                'UGX${snapshot.data[index]['charged_amount']}/=',
                                                 style: TextStyle(
                                                     color: Colors.black,
                                                     fontFamily: 'Poppins',
@@ -260,7 +256,7 @@ class _RecordsPageState extends State<PaymentsPage> {
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 18.sp),
                                               ),
-                                              Spacer(),
+                                              const Spacer(),
                                               Text(
                                                 DateFormat.yMEd()
                                                     .format(DateTime.parse(
@@ -288,7 +284,7 @@ class _RecordsPageState extends State<PaymentsPage> {
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 18.sp),
                                               ),
-                                              Spacer(),
+                                              const Spacer(),
                                               Text(
                                                 snapshot.data[index]['status']
                                                     .toString(),

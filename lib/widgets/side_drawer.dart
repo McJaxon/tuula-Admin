@@ -1,13 +1,9 @@
 import 'package:admin_banja/controllers/dashboard_controller.dart';
-import 'package:admin_banja/controllers/homePageController.dart';
+import 'package:admin_banja/controllers/home_page_controller.dart';
 import 'package:admin_banja/screens/app_data.dart';
 import 'package:admin_banja/screens/auth/payouts.dart';
-import 'package:admin_banja/screens/auth/register_page.dart';
 import 'package:admin_banja/screens/dash.dart';
 import 'package:admin_banja/screens/paymets.dart';
-import 'package:admin_banja/screens/public_area.dart';
-import 'package:admin_banja/screens/records.dart';
-import 'package:admin_banja/screens/slips.dart';
 import 'package:admin_banja/screens/user_and_roles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,13 +23,14 @@ class SliderView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: 260,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           end: Alignment.bottomCenter,
           begin: Alignment.topCenter,
           colors: [
-            Color.fromARGB(255, 7, 112, 86),
-            Color.fromARGB(255, 30, 214, 221)
+            Color.fromARGB(255, 0, 101, 81),
+            Color.fromARGB(255, 141, 226, 246)
           ],
         ),
       ),
@@ -43,26 +40,14 @@ class SliderView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            SizedBox(
-              height: 30.h,
-            ),
             Image.asset(
               'assets/images/tuula_logo.png',
-              width: 180.w,
+              width: 110.w,
             ),
             SizedBox(
               height: 20.h,
             ),
-            Text(
-              GetStorage().read('fullNames') == null
-                  ? 'Hello Admin'
-                  : 'Hi, ${GetStorage().read('fullNames')}',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 29.sp,
-                  fontFamily: 'Poppins'),
-            ),
+
             SizedBox(
               height: 40.h,
             ),
@@ -107,16 +92,14 @@ class SliderView extends StatelessWidget {
                 iconData: 'Chart',
                 screen: const UserRoles()),
             _SliderMenuItem(
-                title: 'Transfers',
-                iconData: 'Chart',
-                screen: const Payout()),
+                title: 'Transfers', iconData: 'Chart', screen: const Payout()),
             const Spacer(),
-            const Spacer(),
-            _SliderMenuItem(
-                logout: true,
-                title: 'Log out',
-                iconData: 'Logout',
-                screen: const RegisterPage()),
+
+            // _SliderMenuItem(
+            //     logout: true,
+            //     title: 'Log out',
+            //     iconData: 'Logout',
+            //     screen: const RegisterPage()),
             SizedBox(
               height: 40.h,
             ),
@@ -164,6 +147,7 @@ class _SliderMenuItem extends StatelessWidget {
           if (canPop) {
             dashController.sliderKey.currentState?.closeSlider();
           } else {
+            GetStorage().erase();
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) => screen!));
           }

@@ -17,8 +17,9 @@ class FieldValidator {
     RegExp regex = RegExp(pattern.toString());
     if (!regex.hasMatch(value!.trim()) && value.isNotEmpty) {
       return 'Enter a valid email';
-    } else
+    } else {
       return null;
+    }
   }
 
   static String? validatePassword(String? value) {
@@ -26,8 +27,9 @@ class FieldValidator {
       return 'Enter at least 6 characters';
     } else if (value.isEmpty) {
       return 'Fill in Password please';
-    } else
+    } else {
       return null;
+    }
   }
 
   static String? validateTIN(String value) {
@@ -35,22 +37,24 @@ class FieldValidator {
       return 'Enter a correct TIN';
     } else if (value.isEmpty) {
       return 'Fill in please here';
-    } else
+    } else {
       return null;
+    }
   }
 
   static String? validatePhone(String? value) {
     Pattern pattern = r"^[0-9]";
 
-    RegExp regex =  RegExp(pattern.toString());
+    RegExp regex = RegExp(pattern.toString());
     if (!regex.hasMatch(value!)) {
       return 'Enter a correct phone number';
     } else if (value.length < 9) {
       return 'Enter a complete phone number';
     } else if (value.isEmpty) {
       return 'Fill in a valid phone';
-    } else
+    } else {
       return null;
+    }
   }
 
   static String? validatePhone2(String? value) {
@@ -67,28 +71,30 @@ class FieldValidator {
 
   static String? validateNIN(String? value) {
     if (value!.isNotEmpty) {
-      print('hello i am here');
       if (!(value.startsWith('F', 1) || value.startsWith('M', 1))) {
         return 'Enter a valid NIN, starting with \'CM......\' or \'CF......\'';
       } else if (value.length < 14 && value.isNotEmpty) {
         return 'Enter a complete NIN, it is 14 characters long';
       }
       return null;
-    } else
+    } else {
       return null;
+    }
   }
 
   static String? validateDescription(String value) {
     if (value.isEmpty) {
       return 'Enter a description';
-    } else
+    } else {
       return null;
+    }
   }
 
   static String? validateField(String? value) {
     if (value!.isEmpty) {
       return 'Enter this field';
-    } else
+    } else {
       return null;
+    }
   }
 }

@@ -23,7 +23,7 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
   var dashController = Get.put(DashboardController());
   var loanCategoryController = Get.put(LoanCategory());
   var positionsController = Get.put(PositionsController());
-    late TabController tabController;
+  late TabController tabController;
   PageController controller = PageController();
   int tabCurrentPage = 0;
   var currentIndex = 0;
@@ -47,7 +47,7 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 188, 238, 241),
       body: Stack(
-        children: <Widget>[
+        children: [
           Stack(
             children: [
               FutureBuilder(
@@ -68,8 +68,7 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                         PageView(
                           controller: tabPageController,
                           onPageChanged: (page) {
-                            tabController
-                                .animateTo(page.toInt());
+                            tabController.animateTo(page.toInt());
                           },
                           children: [
                             Stack(
@@ -166,7 +165,7 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                                                         ),
                                                         SizedBox(width: 10.w),
                                                         Text(
-                                                            snapshot.data[0]
+                                                          snapshot.data[0]
                                                               [index]['name'],
                                                           style: TextStyle(
                                                               color:
@@ -183,8 +182,6 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                                                     SizedBox(
                                                       height: 15.h,
                                                     ),
-
-
                                                     Row(
                                                       children: [
                                                         Text(
@@ -296,7 +293,6 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                                 ),
                               ],
                             ),
-
                             Stack(
                               children: [
                                 ListView.builder(
@@ -487,8 +483,7 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                         onTap: (int page) {
                           tabCurrentPage = page;
 
-                          tabPageController.animateToPage(
-                              tabCurrentPage,
+                          tabPageController.animateToPage(tabCurrentPage,
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.easeIn);
                         },
@@ -503,7 +498,6 @@ class _UserRolesState extends State<UserRoles> with TickerProviderStateMixin {
                                   fontWeight: FontWeight.w500),
                             ),
                           ),
-
                           Tab(
                             child: Text(
                               'Positions',

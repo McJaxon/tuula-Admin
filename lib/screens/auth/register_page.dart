@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:admin_banja/constants/styles.dart';
-import 'package:admin_banja/controllers/authControllers.dart';
+import 'package:admin_banja/controllers/auth_controllers.dart';
 import 'package:admin_banja/models/loan_application_details_model.dart';
 import 'package:admin_banja/services/server.dart';
 import 'package:admin_banja/utils/form_validators.dart';
@@ -171,40 +171,42 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         Text('Choose Role',
             style: TextStyle(
-                fontSize: 17.sp,
+                fontSize: 15.sp,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w500)),
         SizedBox(
           height: 7.h,
         ),
         Container(
-            height: 60.h,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(50.r),
+                borderRadius: BorderRadius.circular(6.r),
                 color: const Color(0xffF2F2F2)),
-            child: DropdownButtonFormField(
-              items: roleList,
-              decoration: InputDecoration(
-                  suffixStyle: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w800,
-                  ),
-                  counterText: '',
-                  prefixStyle: TextStyle(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: DropdownButtonFormField(
+                items: roleList,
+                decoration: InputDecoration(
+                    suffixStyle: const TextStyle(
                       fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                      fontSize: 18.5.sp),
-                  hintText: 'Pick Role/Position',
-                  hintStyle: TextStyle(
-                      fontSize: 17.sp,
-                      color: Color.fromARGB(255, 125, 122, 122)),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20.w)),
-              onChanged: (value) {
-                setState(() {
-                  selectedRole = value;
-                });
-              },
+                      fontWeight: FontWeight.w800,
+                    ),
+                    counterText: '',
+                    prefixStyle: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w500,
+                        fontSize: 15.sp),
+                    hintText: 'Pick Role/Position',
+                    hintStyle: TextStyle(
+                        fontSize: 15.sp,
+                        color: const Color.fromARGB(255, 125, 122, 122)),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 5.w)),
+                onChanged: (value) {
+                  setState(() {
+                    selectedRole = value;
+                  });
+                },
+              ),
             )),
         SizedBox(
           height: 22.h,
@@ -237,7 +239,7 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
         Text(
           'Log in to continue',
-          style: TextStyle(fontSize: 20.sp, fontFamily: 'Poppins '),
+          style: TextStyle(fontSize: 15.sp, fontFamily: 'Poppins '),
         ),
         SizedBox(
           height: 30.h,
@@ -250,7 +252,7 @@ class _RegisterPageState extends State<RegisterPage> {
           hint: 'type in your email address',
         ),
         SizedBox(
-          height: 22.h,
+          height: 5.h,
         ),
         TextBox(
           isPassword: true,
@@ -269,287 +271,268 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () async {
         FocusScope.of(context).unfocus();
         return false;
       },
       child: Scaffold(
-
-          body: Stack(
-            children: [
-              ShaderMask(
-                shaderCallback: (Rect bounds) {
-                  return  LinearGradient(
-
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.blueGrey .shade200, Colors.white]).createShader(bounds);
-                },
-                child: Image.asset('assets/images/auth_bg.webp', height: double.infinity ,fit: BoxFit.fitHeight,)
-              ),
-              PageView(
-                  physics: const NeverScrollableScrollPhysics(),
-                  controller: authController.pageController,
+          body: Row(
+        children: [
+          SizedBox(
+            width: size.width / 2,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/auth_bg_2.webp',
+                  height: double.infinity,
+                  fit: BoxFit.fitHeight,
+                ),
+                Container(
+                  decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Colors.black12, Colors.black54])),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Stack(
-                      children: <Widget>[
-                        Positioned(
-                          top: 90.h,
-                          left: 130.w,
-                          right: 130.w,
-                          child: Column(
-                            children: [
-                              Image.asset(
-                                'assets/images/tuula_logo.png',
-                              ),
-                            ],
-                          ),
-                        ),
-                        Positioned(
-                          top: 180.h,
-                          left: 30.w,
-                          right: 30.w,
-                          child: Text(
-                            'Admin Controller',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                                fontFamily: 'Poppins',
-                                fontSize: 46.sp,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              top: LoginTypes.newUser == loginType
-                                  ? 240.h
-                                  : 240.h),
-                          child: Form(
-                            key: formKey,
-                            child: ListView(
-                              physics: const BouncingScrollPhysics(),
-                              padding: EdgeInsets.symmetric(horizontal: 27.w),
-                              shrinkWrap: true,
-                              children: buildForm(),
-                            ),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: ClipRRect(
-                            child: BackdropFilter(
-                              filter:
-                                  ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                    gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: [
-                                      Colors.transparent,
-                                      Colors.white
-                                    ])),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 0.h, horizontal: 20.h),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: SizedBox(
-                                              height: 70.h,
-                                              child: CupertinoButton(
-                                                borderRadius:
-                                                    BorderRadius.circular(60.r),
-                                                color: const Color(0xff007981),
-                                                child: Text(
-                                                  LoginTypes.newUser ==
-                                                          loginType
-                                                      ? 'Register'
-                                                      : 'Sign in',
-                                                  style: TextStyle(
-                                                      fontFamily: 'Poppins',
-                                                      fontSize: 23.sp,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                onPressed: () async {
-                                                  HapticFeedback.lightImpact();
-                                                  FocusScopeNode currentFocus =
-                                                      FocusScope.of(context);
-                                                  if (!currentFocus
-                                                          .hasPrimaryFocus &&
-                                                      currentFocus
-                                                              .focusedChild !=
-                                                          null) {
-                                                    currentFocus.focusedChild!
-                                                        .unfocus();
-                                                  }
-                                                  if (LoginTypes.newUser ==
-                                                      loginType) {
-                                                    if (authController.emailAddress.text.isNotEmpty ||
-                                                        authController
-                                                            .location
-                                                            .value
-                                                            .text
-                                                            .isNotEmpty ||
-                                                        authController
-                                                            .nationalID
-                                                            .value
-                                                            .text
-                                                            .isNotEmpty ||
-                                                        authController
-                                                            .fullName
-                                                            .value
-                                                            .text
-                                                            .isNotEmpty ||
-                                                        selectedRole != null ||
-                                                        authController
-                                                            .phoneNumber
-                                                            .value
-                                                            .text
-                                                            .isNotEmpty ||
-                                                        authController
-                                                            .passwordConfirm
-                                                            .value
-                                                            .text
-                                                            .isNotEmpty ||
-                                                        authController
-                                                            .emailAddress
-                                                            .value
-                                                            .text
-                                                            .isNotEmpty ||
-                                                        authController
-                                                            .password
-                                                            .value
-                                                            .text
-                                                            .isNotEmpty ||
-                                                        authController.password
-                                                            .text.isNotEmpty) {
-                                                      if (validateAndSave()) {
-                                                        var userDetails = EndUserModel(
-                                                            location: authController
-                                                                .location
-                                                                .value
-                                                                .text,
-                                                            nin: authController
-                                                                .nationalID
-                                                                .value
-                                                                .text,
-                                                            fullNames:
-                                                                authController
-                                                                    .fullName
-                                                                    .value
-                                                                    .text,
-                                                            roleID:
-                                                                selectedRole,
-                                                            phoneNumber:
-                                                                authController
-                                                                    .phoneNumber
-                                                                    .value
-                                                                    .text,
-                                                            passwordConfirm:
-                                                                authController
-                                                                    .passwordConfirm
-                                                                    .value
-                                                                    .text,
-                                                            emailAddress:
-                                                                authController
-                                                                    .emailAddress
-                                                                    .value
-                                                                    .text,
-                                                            password:
-                                                                authController
-                                                                    .password
-                                                                    .value
-                                                                    .text);
-
-                                                        await Server.createUser(
-                                                            userDetails,
-                                                            context);
-                                                      }
-                                                    } else {
-                                                      CustomOverlay.showToast(
-                                                          'Fill out all fields to continue',
-                                                          Colors.red,
-                                                          Colors.white);
-                                                    }
-                                                  } else {
-                                                    if (authController
-                                                            .emailAddress
-                                                            .text
-                                                            .isNotEmpty ||
-                                                        authController.password
-                                                            .text.isNotEmpty) {
-                                                      if (validateAndSave()) {
-                                                        var loginDetails = EndUserModel(
-                                                            emailAddress:
-                                                                authController
-                                                                    .emailAddress
-                                                                    .value
-                                                                    .text,
-                                                            password:
-                                                                authController
-                                                                    .password
-                                                                    .value
-                                                                    .text);
-
-                                                        await Server.userLogIn(
-                                                            context,
-                                                            loginDetails);
-                                                      }
-                                                    } else {
-                                                      CustomOverlay.showToast(
-                                                          'Fill email and password to continue',
-                                                          Colors.red,
-                                                          Colors.white);
-                                                    }
-                                                  }
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      TextButton(
-                                          onPressed: () {
-                                            setState(() {
-                                              if (LoginTypes.newUser ==
-                                                  loginType) {
-                                                loginType =
-                                                    LoginTypes.existingUser;
-                                              } else {
-                                                loginType = LoginTypes.newUser;
-                                              }
-                                            });
-                                          },
-                                          child: Text(
-                                            LoginTypes.newUser == loginType
-                                                ? 'Already have an account?, sign up'
-                                                : 'Don\'t have an account, sign up',
-                                            style: textButtonStyle,
-                                          )),
-                                      SizedBox(
-                                        height: 10.h,
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
+                    const Spacer(),
+                    Image.asset('assets/images/tuula_logo.png'),
+                    const SizedBox(
+                      height: 14.0,
+                    ),
+                    Text(
+                      'Financial partner committed your growth',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                          fontSize: 17.sp),
+                    ),
+                    const Spacer(),
+                    Text(
+                      '© Copyright 2022 Tuula Credit',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                          fontSize: 14.sp),
+                    ),
+                    const SizedBox(
+                      height: 14.0,
                     ),
                   ],
                 ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Stack(
+              children: <Widget>[
+                Positioned(
+                  top: 80.h,
+                  left: 30.w,
+                  right: 30.w,
+                  child: const Text(
+                    'Admin Dashboard',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: 'Poppins',
+                        fontSize: 26,
+                        fontWeight: FontWeight.w500),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: 140,
+                      right: 140,
+                      top: LoginTypes.newUser == loginType ? 160.h : 160.h),
+                  child: Form(
+                    key: formKey,
+                    child: ListView(
+                      physics: const BouncingScrollPhysics(),
+                      padding: EdgeInsets.symmetric(horizontal: 27.w),
+                      shrinkWrap: true,
+                      children: buildForm(),
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ClipRRect(
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [Colors.white10, Colors.white])),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 0.h, horizontal: 150),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 70.0),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: SizedBox(
+                                        height: 60.h,
+                                        child: CupertinoButton(
+                                          borderRadius:
+                                              BorderRadius.circular(60.r),
+                                          color: const Color(0xff007981),
+                                          child: Text(
+                                            LoginTypes.newUser == loginType
+                                                ? 'Register'
+                                                : 'Sign in',
+                                            style: TextStyle(
+                                                fontFamily: 'Poppins',
+                                                fontSize: 15.sp,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          onPressed: () async {
+                                            HapticFeedback.lightImpact();
+                                            FocusScopeNode currentFocus =
+                                                FocusScope.of(context);
+                                            if (!currentFocus.hasPrimaryFocus &&
+                                                currentFocus.focusedChild !=
+                                                    null) {
+                                              currentFocus.focusedChild!
+                                                  .unfocus();
+                                            }
+                                            if (LoginTypes.newUser ==
+                                                loginType) {
+                                              if (authController.emailAddress.text.isNotEmpty ||
+                                                  authController.location.value
+                                                      .text.isNotEmpty ||
+                                                  authController.nationalID
+                                                      .value.text.isNotEmpty ||
+                                                  authController.fullName.value
+                                                      .text.isNotEmpty ||
+                                                  selectedRole != null ||
+                                                  authController.phoneNumber
+                                                      .value.text.isNotEmpty ||
+                                                  authController.passwordConfirm
+                                                      .value.text.isNotEmpty ||
+                                                  authController.emailAddress
+                                                      .value.text.isNotEmpty ||
+                                                  authController.password.value
+                                                      .text.isNotEmpty ||
+                                                  authController.password.text
+                                                      .isNotEmpty) {
+                                                if (validateAndSave()) {
+                                                  var userDetails = EndUserModel(
+                                                      location: authController
+                                                          .location.value.text,
+                                                      nin: authController
+                                                          .nationalID
+                                                          .value
+                                                          .text,
+                                                      fullNames: authController
+                                                          .fullName.value.text,
+                                                      roleID: selectedRole,
+                                                      phoneNumber:
+                                                          authController
+                                                              .phoneNumber
+                                                              .value
+                                                              .text,
+                                                      passwordConfirm:
+                                                          authController
+                                                              .passwordConfirm
+                                                              .value
+                                                              .text,
+                                                      emailAddress:
+                                                          authController
+                                                              .emailAddress
+                                                              .value
+                                                              .text,
+                                                      password: authController
+                                                          .password.value.text);
 
+                                                  await Server.createUser(
+                                                      userDetails, context);
+                                                }
+                                              } else {
+                                                CustomOverlay.showToast(
+                                                    'Fill out all fields to continue',
+                                                    Colors.red[300]!,
+                                                    Colors.white);
+                                              }
+                                            } else {
+                                              if (authController.emailAddress
+                                                      .text.isNotEmpty ||
+                                                  authController.password.text
+                                                      .isNotEmpty) {
+                                                if (validateAndSave()) {
+                                                  var loginDetails =
+                                                      EndUserModel(
+                                                          emailAddress:
+                                                              authController
+                                                                  .emailAddress
+                                                                  .value
+                                                                  .text,
+                                                          password:
+                                                              authController
+                                                                  .password
+                                                                  .value
+                                                                  .text);
 
-            ],
-          )),
+                                                  await Server.userLogIn(
+                                                      context, loginDetails);
+                                                }
+                                              } else {
+                                                CustomOverlay.showToast(
+                                                    'Fill email and password to continue',
+                                                    Colors.red,
+                                                    Colors.white);
+                                              }
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      if (LoginTypes.newUser == loginType) {
+                                        loginType = LoginTypes.existingUser;
+                                      } else {
+                                        loginType = LoginTypes.newUser;
+                                      }
+                                    });
+                                  },
+                                  child: Text(
+                                    LoginTypes.newUser == loginType
+                                        ? 'Already have an account?, log in'
+                                        : 'Don\'t have an account, sign up',
+                                    style: textButtonStyle,
+                                  )),
+                              SizedBox(
+                                height: 10.h,
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+      )),
     );
   }
 }

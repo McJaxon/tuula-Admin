@@ -12,9 +12,9 @@
 
 import 'dart:async';
 import 'dart:developer';
-import 'dart:convert';
+import 'dart:convert' as convert;
 import 'package:admin_banja/constants/strings.dart';
-import 'package:admin_banja/controllers/loanDetailControllers.dart';
+import 'package:admin_banja/controllers/loan_detail_controllers.dart';
 import 'package:admin_banja/models/faq_model.dart';
 import 'package:admin_banja/models/loan_application_details_model.dart';
 import 'package:admin_banja/models/position_model.dart';
@@ -30,7 +30,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:nanoid/nanoid.dart';
-
 import '../models/loan_category.dart';
 
 enum Category {
@@ -58,7 +57,7 @@ class Server extends GetxController {
         'Content-Type': 'application/json'
       };
       var url = Uri.parse('https://api.flutterwave.com/v3/transfers');
-      var transactionRef = 'txf-' + customAlphabet('1234567890abcdef', 10);
+      var transactionRef = 'txf-${customAlphabet('1234567890abcdef', 10)}';
 
       var body = {
         'account_bank': 'MPS',
@@ -77,23 +76,21 @@ class Server extends GetxController {
 
       var req = http.Request('POST', url);
       req.headers.addAll(headersList);
-      req.body = json.encode(body);
+      req.body = convert.json.encode(body);
 
       var res = await req.send();
       final resBody = await res.stream.bytesToString();
-      print(json.decode(resBody));
 
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        if (json.decode(resBody)['success'] == true) {
+        if (convert.json.decode(resBody)['success'] == true) {
           CustomOverlay.showToast(
               'Loan approved Successfully', Colors.green, Colors.white);
         } else {
-          CustomOverlay.showToast(
-              json.decode(resBody)['message'], Colors.red, Colors.white);
+          CustomOverlay.showToast(convert.json.decode(resBody)['message'],
+              Colors.red, Colors.white);
         }
       } else {
         //Get.back();
-        print(res.reasonPhrase);
       }
     } catch (e) {
       CustomOverlay.showToast(
@@ -104,7 +101,7 @@ class Server extends GetxController {
 
   ///creating user
   static Future createUser(
-      EndUserModel userDetailModel, BuildContext comtext) async {
+      EndUserModel userDetailModel, BuildContext context) async {
     try {
       CustomOverlay.showLoaderOverlay(duration: 6);
       await Future.delayed(const Duration(seconds: 6));
@@ -116,7 +113,7 @@ class Server extends GetxController {
             ..fields.addAll(
               {
                 'full_names': userDetailModel.fullNames!,
-                'phone_number': '0' + userDetailModel.phoneNumber!,
+                'phone_number': '0${userDetailModel.phoneNumber!}',
                 'email': userDetailModel.emailAddress!,
                 'location': userDetailModel.location!,
                 'nin': userDetailModel.nin!,
@@ -125,9 +122,6 @@ class Server extends GetxController {
                 "profile_pic":
                     'https://firebasestorage.googleapis.com/v0/b/banja22.appspot.com/o/clientBase%2Fman.png?alt=media&token=fa15fd5d-b6ad-4150-9dbd-063d112c79c4',
                 "role_id": userDetailModel.roleID.toString()
-
-                //'referral_id': element['referral_id'],
-                //'sex': element['sex'],
               },
             );
 
@@ -141,10 +135,7 @@ class Server extends GetxController {
 
       HapticFeedback.selectionClick();
 
-      debugPrint(message.body);
-      debugPrint('${response.statusCode}');
-
-      if (json.decode(message.body)['success'] == true) {
+      if (convert.json.decode(message.body)['success'] == true) {
         // reset current app state
         await Get.deleteAll(force: true);
 // restart app
@@ -152,29 +143,31 @@ class Server extends GetxController {
 // reset get state
         Get.reset();
         Navigator.pushReplacement(
-            comtext, MaterialPageRoute(builder: (context) => Dash()));
+            context, MaterialPageRoute(builder: (context) => const Dash()));
         GetStorage().write('isLoggedIn', true);
         GetStorage().write('userHasProfileAlready', true);
-        GetStorage().write('accessToken', json.decode(message.body)['token']);
         GetStorage()
-            .write('userID', json.decode(message.body)['payload']['id']);
+            .write('accessToken', convert.json.decode(message.body)['token']);
         GetStorage().write(
-            'fullNames', json.decode(message.body)['payload']['full_names']);
-        GetStorage().write(
-            'emailAddress', json.decode(message.body)['payload']['email']);
-        GetStorage().write(
-            'profilePic', json.decode(message.body)['payload']['profile_pic']);
-        GetStorage().write('nin', json.decode(message.body)['payload']['nin']);
-        GetStorage().write(
-            'location', json.decode(message.body)['payload']['location']);
+            'userID', convert.json.decode(message.body)['payload']['id']);
+        GetStorage().write('fullNames',
+            convert.json.decode(message.body)['payload']['full_names']);
+        GetStorage().write('emailAddress',
+            convert.json.decode(message.body)['payload']['email']);
+        GetStorage().write('profilePic',
+            convert.json.decode(message.body)['payload']['profile_pic']);
+        GetStorage()
+            .write('nin', convert.json.decode(message.body)['payload']['nin']);
+        GetStorage().write('location',
+            convert.json.decode(message.body)['payload']['location']);
         GetStorage().write('phoneNumber',
-            json.decode(message.body)['payload']['phone_number']);
+            convert.json.decode(message.body)['payload']['phone_number']);
 
-        GetStorage()
-            .write('roleID', json.decode(message.body)['payload']['role_id']);
+        GetStorage().write(
+            'roleID', convert.json.decode(message.body)['payload']['role_id']);
 
-        GetStorage()
-            .write('roleName', json.decode(message.body)['payload']['name']);
+        GetStorage().write(
+            'roleName', convert.json.decode(message.body)['payload']['name']);
         CustomOverlay.showToast(
             'Account created successfully!', Colors.green, Colors.white);
       } else {
@@ -182,8 +175,7 @@ class Server extends GetxController {
             'Something went wrong, try again later', Colors.red, Colors.white);
       }
     } catch (e) {
-      CustomOverlay.showToast(
-          'Something went wrong, try again later', Colors.red, Colors.white);
+      CustomOverlay.showToast(e.toString(), Colors.red, Colors.white);
     }
   }
 
@@ -211,10 +203,7 @@ class Server extends GetxController {
 
       HapticFeedback.selectionClick();
 
-      debugPrint(message.body);
-      debugPrint('${response.statusCode}');
-
-      if (json.decode(message.body)['success'] == true) {
+      if (convert.json.decode(message.body)['success'] == true) {
         // reset current app state
         await Get.deleteAll(force: true);
 // restart app
@@ -223,32 +212,32 @@ class Server extends GetxController {
         Get.reset();
         GetStorage().write('isLoggedIn', true);
         GetStorage().write('userHasProfileAlready', true);
+        GetStorage().write(
+            'accessToken', convert.json.decode(message.body)['access_token']);
+        GetStorage().write(
+            'userID', convert.json.decode(message.body)['payload']['id']);
+        GetStorage().write('fullNames',
+            convert.json.decode(message.body)['payload']['full_names']);
+        GetStorage().write('emailAddress',
+            convert.json.decode(message.body)['payload']['email']);
+        GetStorage().write('profilePic',
+            convert.json.decode(message.body)['payload']['profile_pic']);
         GetStorage()
-            .write('accessToken', json.decode(message.body)['access_token']);
-        GetStorage()
-            .write('userID', json.decode(message.body)['payload']['id']);
-        GetStorage().write(
-            'fullNames', json.decode(message.body)['payload']['full_names']);
-        GetStorage().write(
-            'emailAddress', json.decode(message.body)['payload']['email']);
-        GetStorage().write(
-            'profilePic', json.decode(message.body)['payload']['profile_pic']);
-        GetStorage().write('nin', json.decode(message.body)['payload']['nin']);
-        GetStorage().write(
-            'location', json.decode(message.body)['payload']['location']);
+            .write('nin', convert.json.decode(message.body)['payload']['nin']);
+        GetStorage().write('location',
+            convert.json.decode(message.body)['payload']['location']);
         GetStorage().write('phoneNumber',
-            json.decode(message.body)['payload']['phone_number']);
+            convert.json.decode(message.body)['payload']['phone_number']);
         CustomOverlay.showToast(
             'Hey there!, welcome back😊', Colors.green, Colors.white);
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => const Dash()));
       } else {
-        CustomOverlay.showToast(
-            json.decode(message.body)['message'], Colors.red, Colors.white);
+        CustomOverlay.showToast(convert.json.decode(message.body)['message'],
+            Colors.red, Colors.white);
       }
     } catch (e) {
-      print(e);
-      CustomOverlay.showToast('Something went wrong', Colors.red, Colors.white);
+      CustomOverlay.showToast(e.toString(), Colors.red, Colors.white);
     }
   }
 
@@ -276,9 +265,8 @@ class Server extends GetxController {
     var response = await request.send();
 
     final message = await http.Response.fromStream(response);
-    debugPrint(message.body);
 
-    if (json.decode(message.body)['success'] == true) {
+    if (convert.json.decode(message.body)['success'] == true) {
       CustomOverlay.showToast(
           'Position added successfully!', Colors.green, Colors.white);
       Get.back();
@@ -322,9 +310,8 @@ class Server extends GetxController {
     var response = await request.send();
 
     final message = await http.Response.fromStream(response);
-    debugPrint(message.body);
 
-    if (json.decode(message.body)['success'] == true) {
+    if (convert.json.decode(message.body)['success'] == true) {
       CustomOverlay.showToast(
           'Loan category successfully!', Colors.green, Colors.white);
       Get.back();
@@ -360,9 +347,8 @@ class Server extends GetxController {
     var response = await request.send();
 
     final message = await http.Response.fromStream(response);
-    debugPrint(message.body);
 
-    if (json.decode(message.body)['success'] == true) {
+    if (convert.json.decode(message.body)['success'] == true) {
       CustomOverlay.showToast(
           'FAQ added successfully!', Colors.green, Colors.white);
       Get.back();
@@ -395,14 +381,12 @@ class Server extends GetxController {
     ///clean up data before sending it
     // ignore: avoid_single_cascade_in_expression_statements
     request..fields.removeWhere((key, value) => value == '');
-    print(request.fields);
 
     var response = await request.send();
 
     final message = await http.Response.fromStream(response);
-    debugPrint(message.body);
 
-    if (json.decode(message.body)['success'] == true) {
+    if (convert.json.decode(message.body)['success'] == true) {
       CustomOverlay.showToast(
           'Transaction Type added successfully!', Colors.green, Colors.white);
       Get.back();
@@ -439,9 +423,8 @@ class Server extends GetxController {
     var response = await request.send();
 
     final message = await http.Response.fromStream(response);
-    debugPrint(message.body);
 
-    if (json.decode(message.body)['success'] == true) {
+    if (convert.json.decode(message.body)['success'] == true) {
       CustomOverlay.showToast(
           'Salary Scale added successfully!', Colors.green, Colors.white);
       Get.back();
@@ -477,9 +460,8 @@ class Server extends GetxController {
     var response = await request.send();
 
     final message = await http.Response.fromStream(response);
-    debugPrint(message.body);
 
-    if (json.decode(message.body)['success'] == true) {
+    if (convert.json.decode(message.body)['success'] == true) {
       CustomOverlay.showToast(
           'Profession added successfully!', Colors.green, Colors.white);
       Get.back();
@@ -507,7 +489,7 @@ class Server extends GetxController {
       var body = {"is_approved": 1};
       var req = http.Request('PUT', url);
       req.headers.addAll(headersList);
-      req.body = json.encode(body);
+      req.body = convert.json.encode(body);
 
       var res = await req.send();
       final resBody = await res.stream.bytesToString();
@@ -520,7 +502,7 @@ class Server extends GetxController {
 // reset get state
         Get.reset();
 
-        if (json.decode(resBody)['success'] == true) {
+        if (convert.json.decode(resBody)['success'] == true) {
           // Server.makeCashOut(
           //     loan['phone_number'], loan['full_names'], loan['loan_amount']);
           CustomOverlay.showToast(
@@ -528,12 +510,11 @@ class Server extends GetxController {
 
           return true;
         } else {
-          CustomOverlay.showToast(
-              json.decode(resBody)['message'], Colors.red, Colors.white);
+          CustomOverlay.showToast(convert.json.decode(resBody)['message'],
+              Colors.red, Colors.white);
         }
       } else {
         Get.back();
-        print(res.reasonPhrase);
       }
 
       HapticFeedback.selectionClick();
@@ -562,16 +543,14 @@ class Server extends GetxController {
       final resBody = await res.stream.bytesToString();
 
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        if (json.decode(resBody)['success'] == true) {
+        if (convert.json.decode(resBody)['success'] == true) {
           CustomOverlay.showToast(
               'Loan Category deleted Successfully', Colors.green, Colors.white);
         } else {
-          CustomOverlay.showToast(
-              json.decode(resBody)['message'], Colors.red, Colors.white);
+          CustomOverlay.showToast(convert.json.decode(resBody)['message'],
+              Colors.red, Colors.white);
         }
-      } else {
-        print(res.reasonPhrase);
-      }
+      } else {}
 
       HapticFeedback.selectionClick();
     } catch (e) {
@@ -603,16 +582,14 @@ class Server extends GetxController {
         Phoenix.rebirth(Get.context!);
 // reset get state
         Get.reset();
-        if (json.decode(resBody)['success'] == true) {
+        if (convert.json.decode(resBody)['success'] == true) {
           CustomOverlay.showToast(
               'Position deleted Successfully', Colors.green, Colors.white);
         } else {
-          CustomOverlay.showToast(
-              json.decode(resBody)['message'], Colors.red, Colors.white);
+          CustomOverlay.showToast(convert.json.decode(resBody)['message'],
+              Colors.red, Colors.white);
         }
-      } else {
-        print(res.reasonPhrase);
-      }
+      } else {}
 
       HapticFeedback.selectionClick();
     } catch (e) {
@@ -640,24 +617,22 @@ class Server extends GetxController {
       };
       var req = http.Request('PUT', url);
       req.headers.addAll(headersList);
-      req.body = json.encode(body);
+      req.body = convert.json.encode(body);
 
       var res = await req.send();
       final resBody = await res.stream.bytesToString();
 
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        if (json.decode(resBody)['success'] == true) {
+        if (convert.json.decode(resBody)['success'] == true) {
           CustomOverlay.showToast(
               'Loan Category updated Successfully', Colors.green, Colors.white);
           Get.back();
         } else {
-          CustomOverlay.showToast(
-              json.decode(resBody)['message'], Colors.red, Colors.white);
+          CustomOverlay.showToast(convert.json.decode(resBody)['message'],
+              Colors.red, Colors.white);
           Get.back();
         }
-      } else {
-        print(res.reasonPhrase);
-      }
+      } else {}
 
       HapticFeedback.selectionClick();
     } catch (e) {
@@ -691,25 +666,23 @@ class Server extends GetxController {
       };
       var req = http.Request('PUT', url);
       req.headers.addAll(headersList);
-      req.body = json.encode(body);
+      req.body = convert.json.encode(body);
 
       var res = await req.send();
       final resBody = await res.stream.bytesToString();
 
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        if (json.decode(resBody)['success'] == true) {
+        if (convert.json.decode(resBody)['success'] == true) {
           CustomOverlay.showToast(
               'Loan Category updated Successfully', Colors.green, Colors.white);
 
           Get.back();
         } else {
-          CustomOverlay.showToast(
-              json.decode(resBody)['message'], Colors.red, Colors.white);
+          CustomOverlay.showToast(convert.json.decode(resBody)['message'],
+              Colors.red, Colors.white);
           Get.back();
         }
-      } else {
-        print(res.reasonPhrase);
-      }
+      } else {}
 
       HapticFeedback.selectionClick();
     } catch (e) {
@@ -734,19 +707,16 @@ class Server extends GetxController {
 
       var res = await req.send();
       final resBody = await res.stream.bytesToString();
-      print(resBody);
 
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        if (json.decode(resBody)['success'] == true) {
+        if (convert.json.decode(resBody)['success'] == true) {
           CustomOverlay.showToast('Transaction Type deleted Successfully',
               Colors.green, Colors.white);
         } else {
-          CustomOverlay.showToast(
-              json.decode(resBody)['message'], Colors.red, Colors.white);
+          CustomOverlay.showToast(convert.json.decode(resBody)['message'],
+              Colors.red, Colors.white);
         }
-      } else {
-        print(res.reasonPhrase);
-      }
+      } else {}
 
       HapticFeedback.selectionClick();
     } catch (e) {
@@ -774,26 +744,22 @@ class Server extends GetxController {
       };
       var req = http.Request('PUT', url);
       req.headers.addAll(headersList);
-      req.body = json.encode(body);
+      req.body = convert.json.encode(body);
 
       var res = await req.send();
       final resBody = await res.stream.bytesToString();
 
-      print(resBody);
-
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        if (json.decode(resBody)['success'] == true) {
+        if (convert.json.decode(resBody)['success'] == true) {
           CustomOverlay.showToast('Transaction Type updated Successfully',
               Colors.green, Colors.white);
           Get.back();
         } else {
-          CustomOverlay.showToast(
-              json.decode(resBody)['message'], Colors.red, Colors.white);
+          CustomOverlay.showToast(convert.json.decode(resBody)['message'],
+              Colors.red, Colors.white);
           Get.back();
         }
-      } else {
-        print(res.reasonPhrase);
-      }
+      } else {}
 
       HapticFeedback.selectionClick();
     } catch (e) {
@@ -816,11 +782,11 @@ class Server extends GetxController {
       var body = {"is_denied": 1};
       var req = http.Request('PUT', url);
       req.headers.addAll(headersList);
-      req.body = json.encode(body);
+      req.body = convert.json.encode(body);
 
       var res = await req.send();
       final resBody = await res.stream.bytesToString();
-      print(json.decode(resBody));
+
       if (res.statusCode >= 200 && res.statusCode < 300) {
         // reset current app state
         await Get.deleteAll(force: true);
@@ -830,17 +796,15 @@ class Server extends GetxController {
         Get.reset();
 
         // loanController.loanApplications.removeAt(loanId);
-        print(json.decode(resBody));
-        if (json.decode(resBody)['success'] == true) {
+
+        if (convert.json.decode(resBody)['success'] == true) {
           CustomOverlay.showToast(
               'Loan declined Successfully', Colors.green, Colors.white);
         } else {
-          CustomOverlay.showToast(
-              json.decode(resBody)['message'], Colors.red, Colors.white);
+          CustomOverlay.showToast(convert.json.decode(resBody)['message'],
+              Colors.red, Colors.white);
         }
-      } else {
-        print(res.reasonPhrase);
-      }
+      } else {}
 
       HapticFeedback.selectionClick();
     } catch (e) {
@@ -856,11 +820,23 @@ class Server extends GetxController {
 
     var response = await request.send();
     final message = await http.Response.fromStream(response);
-    log(json.decode(message.body).toString());
-    return json.decode(message.body)['success']
-        ? json.decode(message.body)['payload']
+
+    log(convert.json.decode(message.body).toString());
+    return convert.json.decode(message.body)['success']
+        ? convert.json.decode(message.body)['payload']
         : [];
   }
+  // static Future fetchData() async {
+  //   HapticFeedback.selectionClick();
+  //   var request = await http.get(dashboardUrl);
+  //   if (request.statusCode == 200) {
+  //     var jsonRequest =
+  //         convert.jsonDecode(request.body) as Map<String, dynamic>;
+
+  //   }else{
+  //     print('Request failed');
+  //   }
+  // }
 
   static Future fetchPositions() async {
     HapticFeedback.selectionClick();
@@ -871,8 +847,8 @@ class Server extends GetxController {
     var response = await request.send();
     final message = await http.Response.fromStream(response);
 
-    if (json.decode(message.body)['success'] == true) {
-      return json.decode(message.body)['payload'];
+    if (convert.json.decode(message.body)['success'] == true) {
+      return convert.json.decode(message.body)['payload'];
     }
     return response;
   }
@@ -886,8 +862,8 @@ class Server extends GetxController {
     var response = await request.send();
     final message = await http.Response.fromStream(response);
 
-    return json.decode(message.body)['success']
-        ? json.decode(message.body)['payload']
+    return convert.json.decode(message.body)['success']
+        ? convert.json.decode(message.body)['payload']
         : [];
   }
 
@@ -900,8 +876,8 @@ class Server extends GetxController {
     var response = await request.send();
     final message = await http.Response.fromStream(response);
 
-    if (json.decode(message.body)['success'] == true) {
-      return json.decode(message.body);
+    if (convert.json.decode(message.body)['success'] == true) {
+      return convert.json.decode(message.body);
     }
     return response;
   }
@@ -915,8 +891,8 @@ class Server extends GetxController {
     var response = await request.send();
     final message = await http.Response.fromStream(response);
 
-    if (json.decode(message.body)['success'] == true) {
-      return json.decode(message.body);
+    if (convert.json.decode(message.body)['success'] == true) {
+      return convert.json.decode(message.body);
     }
     return response;
   }
@@ -930,8 +906,8 @@ class Server extends GetxController {
     var response = await request.send();
     final message = await http.Response.fromStream(response);
 
-    if (json.decode(message.body)['success'] == true) {
-      return json.decode(message.body);
+    if (convert.json.decode(message.body)['success'] == true) {
+      return convert.json.decode(message.body);
     }
     return response;
   }
@@ -945,8 +921,8 @@ class Server extends GetxController {
     var response = await request.send();
     final message = await http.Response.fromStream(response);
 
-    return json.decode(message.body)['success']
-        ? json.decode(message.body)['payload']
+    return convert.json.decode(message.body)['success']
+        ? convert.json.decode(message.body)['payload']
         : [];
   }
 
@@ -958,9 +934,9 @@ class Server extends GetxController {
 
     var response = await request.send();
     final message = await http.Response.fromStream(response);
-    print(json.decode(message.body));
-    if (json.decode(message.body)['success'] == true) {
-      return json.decode(message.body)['payload'];
+
+    if (convert.json.decode(message.body)['success'] == true) {
+      return convert.json.decode(message.body)['payload'];
     }
     return response;
   }
@@ -973,11 +949,13 @@ class Server extends GetxController {
 
     var response = await request.send();
     final message = await http.Response.fromStream(response);
-    print(json.decode(message.body));
-    if (json.decode(message.body)['success'] == true) {
-      return json.decode(message.body);
-    }
-    return response;
+
+    // if (json.decode(message.body)['success'] == true) {
+    //   return json.decode(message.body);
+    // }
+    return convert.json.decode(message.body)['success']
+        ? convert.json.decode(message.body)['payload']
+        : [];
   }
 
   static Future fetchAllFAQs() async {
@@ -988,9 +966,9 @@ class Server extends GetxController {
 
     var response = await request.send();
     final message = await http.Response.fromStream(response);
-    print(json.decode(message.body));
-    if (json.decode(message.body)['success'] == true) {
-      return json.decode(message.body);
+
+    if (convert.json.decode(message.body)['success'] == true) {
+      return convert.json.decode(message.body);
     }
     return response;
   }
@@ -1008,11 +986,12 @@ class Server extends GetxController {
 
     var response = await request.send();
     final message = await http.Response.fromStream(response);
-    print(json.decode(message.body));
-    if (json.decode(message.body)['success'] == 'success') {
-      return json.decode(message.body)['data'];
+
+    if (convert.json.decode(message.body)['success'] == 'success') {
+      return convert.json.decode(message.body)['data'];
     }
-    return json.decode(message.body)['data'];
+    return print('failed to fetch payments');
+    // json.decode(message.body)['data'];
   }
 
   static Future fetchFailedPayments() async {
@@ -1026,11 +1005,11 @@ class Server extends GetxController {
 
     var response = await request.send();
     final message = await http.Response.fromStream(response);
-    print(json.decode(message.body));
-    if (json.decode(message.body)['success'] == 'success') {
-      return json.decode(message.body)['data'];
+
+    if (convert.json.decode(message.body)['success'] == 'success') {
+      return convert.json.decode(message.body)['data'];
     }
-    return json.decode(message.body)['data'];
+    return convert.json.decode(message.body)['data'];
   }
 
   static Future fetchAllLoanCategories() async {
@@ -1041,9 +1020,9 @@ class Server extends GetxController {
 
     var response = await request.send();
     final message = await http.Response.fromStream(response);
-    print(json.decode(message.body));
-    if (json.decode(message.body)['success'] == true) {
-      return json.decode(message.body);
+
+    if (convert.json.decode(message.body)['success'] == true) {
+      return convert.json.decode(message.body);
     }
     return response;
   }

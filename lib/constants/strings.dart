@@ -31,16 +31,16 @@ List transactionSource = [
 
 ///api uri links
 ///base url
-var baseUrl = 'http://tuulacredit.com/jubilant-waddle/public/api/v1';
+var baseUrl = 'https://tuulacredit.com/jubilant-waddle/public/api/v1';
 
 ///get dashboard
-Uri dashboardUrl = Uri.parse('$baseUrl/dashboard/get_all/');
+Uri dashboardUrl = Uri.parse('$baseUrl/dashboard/get_all');
 
 ///get all users
-Uri getUsersUrl = Uri.parse('$baseUrl/user/get_all/');
+Uri getUsersUrl = Uri.parse('$baseUrl/user/get_all');
 
 ///get all admin users
-Uri getAdminUsersUrl = Uri.parse('$baseUrl/user/get_admins/');
+Uri getAdminUsersUrl = Uri.https('$baseUrl/user/get_admins');
 
 ///get dashboard
 Uri allLoansUrl = Uri.parse('$baseUrl/loan/get_loan_applications');

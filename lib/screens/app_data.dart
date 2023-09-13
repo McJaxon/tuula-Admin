@@ -12,7 +12,6 @@ import 'package:admin_banja/widgets/no_record_error.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:get/get.dart';
 
 class AppData extends StatefulWidget {
@@ -53,7 +52,7 @@ class _AppDataState extends State<AppData> with TickerProviderStateMixin {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 188, 238, 241),
       body: Stack(
-        children: <Widget>[
+        children: [
           Stack(
             children: [
               FutureBuilder(

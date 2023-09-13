@@ -1,8 +1,9 @@
+import 'dart:io';
+
 import 'package:admin_banja/controllers/dashboard_controller.dart';
 import 'package:admin_banja/pager.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -13,6 +14,15 @@ import 'package:get_storage/get_storage.dart';
 import 'package:oktoast/oktoast.dart';
 
 import 'firebase_options.dart';
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
 
 /// Define a top-level named handler which background/terminated messages will
 /// call.
@@ -26,6 +36,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   if (message.notification != null) {
+    // ignore: avoid_print
     print(
         'Message also contained a notification: ${message.notification!.body}');
 
@@ -43,6 +54,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
           ),
         ));
   }
+  // ignore: avoid_print
   print('Handling a background message ${message.messageId}');
 }
 
@@ -59,6 +71,7 @@ const MethodChannel platform =
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  HttpOverrides.global = MyHttpOverrides();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // Set the background messaging handler early on, as a named top-level function
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -68,86 +81,86 @@ Future<void> main() async {
 
   Get.put(DashboardController());
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    RemoteNotification? notification = message.notification;
-    AndroidNotification? android = message.notification?.android;
-    print('Got a message whilst in the foreground!');
-    print('Message data: ${message.data}');
+  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //   RemoteNotification? notification = message.notification;
+  //   AndroidNotification? android = message.notification?.android;
+  //   print('Got a message whilst in the foreground!');
+  //   print('Message data: ${message.data}');
 
-    if (message.notification != null) {
-      print(
-          'Message also contained a notification: ${message.notification!.body}');
+  //   if (message.notification != null) {
+  //     print(
+  //         'Message also contained a notification: ${message.notification!.body}');
 
-      flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification!.title,
-          notification.body,
-          NotificationDetails(
-            android: AndroidNotificationDetails(
-              channel.id,
-              channel.name,
-              channelDescription: channel.description,
-              // icon: android?.smallIcon,
-              // other properties...
-            ),
-          ));
-    }
-  });
+  //     flutterLocalNotificationsPlugin.show(
+  //         notification.hashCode,
+  //         notification!.title,
+  //         notification.body,
+  //         NotificationDetails(
+  //           android: AndroidNotificationDetails(
+  //             channel.id,
+  //             channel.name,
+  //             channelDescription: channel.description,
+  //             // icon: android?.smallIcon,
+  //             // other properties...
+  //           ),
+  //         ));
+  //   }
+  // });
 
-  if (!kIsWeb) {
-    var initializationSettingsAndroid =
-        const AndroidInitializationSettings('mipmap/ic_launcher');
-    channel = const AndroidNotificationChannel(
-      'new_loan_request_channel', // id
-      'New Loan Application ', // title
-      description:
-          'This channel receives new loan application requests from clients.', // description
-      importance: Importance.high,
-    );
+  // if (!kIsWeb) {
+  //   var initializationSettingsAndroid =
+  //       const AndroidInitializationSettings('mipmap/ic_launcher');
+  //   channel = const AndroidNotificationChannel(
+  //     'new_loan_request_channel', // id
+  //     'New Loan Application ', // title
+  //     description:
+  //         'This channel receives new loan application requests from clients.', // description
+  //     importance: Importance.high,
+  //   );
 
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  //   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
-    /// Create an Android Notification Channel.
-    ///
-    /// We use this channel in the `AndroidManifest.xml` file to override the
-    /// default FCM channel to enable heads up notifications.
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
+  //   /// Create an Android Notification Channel.
+  //   ///
+  //   /// We use this channel in the `AndroidManifest.xml` file to override the
+  //   /// default FCM channel to enable heads up notifications.
+  //   await flutterLocalNotificationsPlugin
+  //       .resolvePlatformSpecificImplementation<
+  //           AndroidFlutterLocalNotificationsPlugin>()
+  //       ?.createNotificationChannel(channel);
 
-    /// Update the iOS foreground notification presentation options to allow
-    /// heads up notifications.
-    // await FirebaseMessaging.instance
-    //     .setForegroundNotificationPresentationOptions(
-    //   alert: true,
-    //   badge: true,
-    //   sound: true,
-    // );
+  //   /// Update the iOS foreground notification presentation options to allow
+  //   /// heads up notifications.
+  //   // await FirebaseMessaging.instance
+  //   //     .setForegroundNotificationPresentationOptions(
+  //   //   alert: true,
+  //   //   badge: true,
+  //   //   sound: true,
+  //   // );
 
-    final InitializationSettings initializationSettings =
-        InitializationSettings(
-      android: initializationSettingsAndroid,
-    );
+  //   final InitializationSettings initializationSettings =
+  //       InitializationSettings(
+  //     android: initializationSettingsAndroid,
+  //   );
 
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: (String? payload) async {
-      if (payload != null) {
-        debugPrint('notification payload: $payload');
-      }
-      // selectedNotificationPayload = payload;
-      // selectNotificationSubject.add(payload);
-    });
-  }
+  //   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+  //       onSelectNotification: (String? payload) async {
+  //     if (payload != null) {
+  //       debugPrint('notification payload: $payload');
+  //     }
+  //     // selectedNotificationPayload = payload;
+  //     // selectNotificationSubject.add(payload);
+  //   });
+  // }
 
-  bool isSubscribedToTopic =
-      GetStorage().read('is_subscribed_to_new_requests') ?? true;
-        await FirebaseMessaging.instance.subscribeToTopic("new_loan_request");
+  // bool isSubscribedToTopic =
+  //     GetStorage().read('is_subscribed_to_new_requests') ?? true;
+  //       await FirebaseMessaging.instance.subscribeToTopic("new_loan_request");
 
-  if (isSubscribedToTopic) {
+  // if (isSubscribedToTopic) {
 
-    GetStorage().write('is_subscribed_to_new_requests', false);
-  }
+  //   GetStorage().write('is_subscribed_to_new_requests', false);
+  // }
 
   runApp(
     Phoenix(
@@ -175,8 +188,8 @@ class MyApp extends StatelessWidget {
         }
       },
       child: ScreenUtilInit(
-          designSize: const Size(520, 890),
-          builder: (context) {
+          designSize: const Size(1520, 890),
+          builder: (buildContext, context) {
             return GetMaterialApp(
               title: 'Tuula Admin',
               theme: ThemeData(
@@ -196,6 +209,7 @@ class MyApp extends StatelessWidget {
                   child: widget!,
                 );
               },
+              debugShowCheckedModeBanner: false,
               home: const Pager(),
             );
           }),

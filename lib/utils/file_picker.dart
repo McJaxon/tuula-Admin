@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 // import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 

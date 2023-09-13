@@ -55,6 +55,11 @@ class TransactionTypeController extends GetxController {
                             },
                             child: Container(
                               height: 55.h,
+                              decoration: BoxDecoration(
+                                  color: Colors.red.shade400,
+                                  borderRadius: BorderRadius.circular(
+                                    10.r,
+                                  )),
                               child: const Center(
                                   child: Text(
                                 'NO',
@@ -63,11 +68,6 @@ class TransactionTypeController extends GetxController {
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500),
                               )),
-                              decoration: BoxDecoration(
-                                  color: Colors.red.shade400,
-                                  borderRadius: BorderRadius.circular(
-                                    10.r,
-                                  )),
                             ),
                           ),
                         ),
@@ -83,17 +83,17 @@ class TransactionTypeController extends GetxController {
                             },
                             child: Container(
                               height: 55.h,
+                              decoration: BoxDecoration(
+                                  color: Colors.green.shade400,
+                                  borderRadius: BorderRadius.circular(
+                                    10.r,
+                                  )),
                               child: const Center(
                                   child: Text('YES',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           color: Colors.white,
                                           fontWeight: FontWeight.w600))),
-                              decoration: BoxDecoration(
-                                  color: Colors.green.shade400,
-                                  borderRadius: BorderRadius.circular(
-                                    10.r,
-                                  )),
                             ),
                           ),
                         )
@@ -180,6 +180,14 @@ class TransactionTypeController extends GetxController {
                                                   },
                                                   child: Container(
                                                     height: 55.h,
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Colors.red.shade400,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10.r,
+                                                        )),
                                                     child: const Center(
                                                         child: Text(
                                                       'NO',
@@ -189,14 +197,6 @@ class TransactionTypeController extends GetxController {
                                                           fontWeight:
                                                               FontWeight.w500),
                                                     )),
-                                                    decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.red.shade400,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          10.r,
-                                                        )),
                                                   ),
                                                 ),
                                               ),
@@ -211,6 +211,14 @@ class TransactionTypeController extends GetxController {
                                                   },
                                                   child: Container(
                                                     height: 55.h,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors
+                                                            .green.shade400,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10.r,
+                                                        )),
                                                     child: const Center(
                                                         child: Text('YES',
                                                             style: TextStyle(
@@ -221,14 +229,6 @@ class TransactionTypeController extends GetxController {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600))),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors
-                                                            .green.shade400,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          10.r,
-                                                        )),
                                                   ),
                                                 ),
                                               )
@@ -312,7 +312,6 @@ class TransactionTypeController extends GetxController {
                                       height: 6.h,
                                     ),
                                     Container(
-
                                       decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(10.0),
@@ -465,6 +464,14 @@ class TransactionTypeController extends GetxController {
                                                   },
                                                   child: Container(
                                                     height: 55.h,
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Colors.red.shade400,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10.r,
+                                                        )),
                                                     child: const Center(
                                                         child: Text(
                                                       'NO',
@@ -474,14 +481,6 @@ class TransactionTypeController extends GetxController {
                                                           fontWeight:
                                                               FontWeight.w500),
                                                     )),
-                                                    decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.red.shade400,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          10.r,
-                                                        )),
                                                   ),
                                                 ),
                                               ),
@@ -496,6 +495,14 @@ class TransactionTypeController extends GetxController {
                                                   },
                                                   child: Container(
                                                     height: 55.h,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors
+                                                            .green.shade400,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10.r,
+                                                        )),
                                                     child: const Center(
                                                         child: Text('YES',
                                                             style: TextStyle(
@@ -506,14 +513,6 @@ class TransactionTypeController extends GetxController {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600))),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors
-                                                            .green.shade400,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          10.r,
-                                                        )),
                                                   ),
                                                 ),
                                               )

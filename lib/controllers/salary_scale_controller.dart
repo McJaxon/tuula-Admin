@@ -83,6 +83,14 @@ class SalaryScaleController extends GetxController {
                                                   },
                                                   child: Container(
                                                     height: 55.h,
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Colors.red.shade400,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10.r,
+                                                        )),
                                                     child: const Center(
                                                         child: Text(
                                                       'NO',
@@ -92,14 +100,6 @@ class SalaryScaleController extends GetxController {
                                                           fontWeight:
                                                               FontWeight.w500),
                                                     )),
-                                                    decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.red.shade400,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          10.r,
-                                                        )),
                                                   ),
                                                 ),
                                               ),
@@ -114,6 +114,14 @@ class SalaryScaleController extends GetxController {
                                                   },
                                                   child: Container(
                                                     height: 55.h,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors
+                                                            .green.shade400,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10.r,
+                                                        )),
                                                     child: const Center(
                                                         child: Text('YES',
                                                             style: TextStyle(
@@ -124,14 +132,6 @@ class SalaryScaleController extends GetxController {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600))),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors
-                                                            .green.shade400,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          10.r,
-                                                        )),
                                                   ),
                                                 ),
                                               )
@@ -256,7 +256,7 @@ class SalaryScaleController extends GetxController {
                                 var salaryScaleData = SalaryScaleModel(
                                     minimumIncome: _min.text,
                                     maximumIncome: _max.text,
-                                    incomeRange: _min.text + ' - ' + _max.text);
+                                    incomeRange: '${_min.text} - ${_max.text}');
                                 Server.createSalaryScale(salaryScaleData);
                               }
                             },

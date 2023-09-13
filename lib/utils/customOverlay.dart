@@ -11,7 +11,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:lottie/lottie.dart';
 import 'package:oktoast/oktoast.dart';
 
@@ -33,9 +32,9 @@ class CustomOverlay {
 
   static showToast(String message, Color bgColor, Color textColor,
       {isError = false}) {
-    Widget widget = Stack(clipBehavior: Clip.none, children: [
+    Widget widget1 = Stack(clipBehavior: Clip.none, children: [
       Padding(
-        padding: EdgeInsets.only(left: 40.w, right: 40.w),
+        padding: EdgeInsets.only(left: 340.w, right: 340.w),
         child: Material(
           shadowColor: bgColor,
           borderRadius: BorderRadius.circular(26.r),
@@ -73,8 +72,39 @@ class CustomOverlay {
             : Container(),
       )
     ]);
+    Widget widget12 = Padding(
+        padding: const EdgeInsets.only(right: 30.0),
+        child: Align(
+          alignment: Alignment.topRight,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(5.r),
+            child: Material(
+                shadowColor: bgColor,
+                color: bgColor,
+                borderRadius: BorderRadius.circular(5.r),
+                child: SizedBox(
+                  child: Container(
+                    width: 400,
+                    color: bgColor,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text(
+                        message,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: textColor,
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Poppins'),
+                      ),
+                    ),
+                  ),
+                )),
+          ),
+        ));
+
     showToastWidget(
-      widget,
+      widget12,
       position: ToastPosition.top,
       dismissOtherToast: true,
       animationCurve: Curves.easeInOut,

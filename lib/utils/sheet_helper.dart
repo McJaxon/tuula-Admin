@@ -14,11 +14,14 @@ import 'package:flutter/services.dart';
 
 class CupertinoBottomSheet extends StatelessWidget {
   const CupertinoBottomSheet(
-      {Key? key, required this.child, this.backgroundColor,this.topPadding = 10})
-      :
-        super(key: key);
+      {Key? key,
+      required this.child,
+      this.backgroundColor,
+      this.topPadding = 10})
+      : super(key: key);
 
   final Color? backgroundColor;
+
   /// Widget to render
   final Widget child;
 
@@ -32,19 +35,20 @@ class CupertinoBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final topSafeAreaPadding = MediaQuery.of(context).padding.top;
     final topPadding = this.topPadding + topSafeAreaPadding;
-    final radius = Radius.circular(12);
-    final shadow =
+    const radius = Radius.circular(12);
+    const shadow =
         BoxShadow(blurRadius: 10, color: Colors.black12, spreadRadius: 5);
     final backgroundColor = this.backgroundColor ??
         CupertinoTheme.of(context).scaffoldBackgroundColor;
 
     final decoration =
-        BoxDecoration(color: backgroundColor, boxShadow: [shadow]);
+        BoxDecoration(color: backgroundColor, boxShadow: const [shadow]);
 
     return Padding(
       padding: EdgeInsets.only(top: topPadding),
       child: ClipRRect(
-        borderRadius: BorderRadius.only(topLeft: radius, topRight: radius),
+        borderRadius:
+            const BorderRadius.only(topLeft: radius, topRight: radius),
         child: Container(
           decoration: decoration,
           width: double.infinity,

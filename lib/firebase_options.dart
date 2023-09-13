@@ -17,24 +17,15 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -52,11 +43,43 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBa-p2n8vaRIogJCVVoGDjYNP4tpt7gDoM',
+    appId: '1:256955403295:web:bf067896c91518a5cb992a',
+    messagingSenderId: '256955403295',
+    projectId: 'banja22',
+    authDomain: 'banja22.firebaseapp.com',
+    storageBucket: 'banja22.appspot.com',
+    measurementId: 'G-QF7PJB3P7K',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyA21jcSid25OKYcSKsAOe4lB9RYv-CMxG0',
     appId: '1:256955403295:android:fd251da0c558f21ccb992a',
     messagingSenderId: '256955403295',
     projectId: 'banja22',
     storageBucket: 'banja22.appspot.com',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyCOKtn0MbU7HTDcdu8FQ5VgfYG5Fv9Tw6E',
+    appId: '1:256955403295:ios:fb0dc7f1eda8d77fcb992a',
+    messagingSenderId: '256955403295',
+    projectId: 'banja22',
+    storageBucket: 'banja22.appspot.com',
+    androidClientId: '256955403295-4ubv8g7gcnns845o4ubl5ev7jugb06ia.apps.googleusercontent.com',
+    iosClientId: '256955403295-dt0ee1esbs33r1utebc0nufq1c8grfu4.apps.googleusercontent.com',
+    iosBundleId: 'come.zaren.tuula',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyCOKtn0MbU7HTDcdu8FQ5VgfYG5Fv9Tw6E',
+    appId: '1:256955403295:ios:87db5dd00e475496cb992a',
+    messagingSenderId: '256955403295',
+    projectId: 'banja22',
+    storageBucket: 'banja22.appspot.com',
+    androidClientId: '256955403295-4ubv8g7gcnns845o4ubl5ev7jugb06ia.apps.googleusercontent.com',
+    iosClientId: '256955403295-36k8oa58gvo8qfvibp8pgvd2q800pkim.apps.googleusercontent.com',
+    iosBundleId: 'com.zaren.adminBanja',
   );
 }

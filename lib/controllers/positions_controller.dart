@@ -14,37 +14,34 @@ class PositionsController extends GetxController {
 
   List<DropdownMenuItem<int>> levels = const [
     DropdownMenuItem(
-      child: Text('0'),
       value: 0,
+      child: Text('0'),
     ),
     DropdownMenuItem(
-      child: Text('1'),
       value: 1,
+      child: Text('1'),
     ),
     DropdownMenuItem(
-      child: Text('2'),
       value: 2,
+      child: Text('2'),
     ),
     DropdownMenuItem(
-      child: Text('3'),
       value: 3,
+      child: Text('3'),
     ),
     DropdownMenuItem(
-      child: Text('4'),
       value: 4,
+      child: Text('4'),
     ),
     DropdownMenuItem(
-      child: Text('5'),
       value: 5,
+      child: Text('5'),
     )
   ];
 
   var refreshState = false.obs;
   // ignore: prefer_typing_uninitialized_variables
   var selectedLevel;
-
-
-
 
   confirmPositionsDelete(BuildContext context, var categoryID) {
     refreshState(false);
@@ -87,6 +84,11 @@ class PositionsController extends GetxController {
                             },
                             child: Container(
                               height: 55.h,
+                              decoration: BoxDecoration(
+                                  color: Colors.red.shade400,
+                                  borderRadius: BorderRadius.circular(
+                                    10.r,
+                                  )),
                               child: const Center(
                                   child: Text(
                                 'NO',
@@ -95,11 +97,6 @@ class PositionsController extends GetxController {
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500),
                               )),
-                              decoration: BoxDecoration(
-                                  color: Colors.red.shade400,
-                                  borderRadius: BorderRadius.circular(
-                                    10.r,
-                                  )),
                             ),
                           ),
                         ),
@@ -115,17 +112,17 @@ class PositionsController extends GetxController {
                             },
                             child: Container(
                               height: 55.h,
+                              decoration: BoxDecoration(
+                                  color: Colors.green.shade400,
+                                  borderRadius: BorderRadius.circular(
+                                    10.r,
+                                  )),
                               child: const Center(
                                   child: Text('YES',
                                       style: TextStyle(
                                           fontFamily: 'Poppins',
                                           color: Colors.white,
                                           fontWeight: FontWeight.w600))),
-                              decoration: BoxDecoration(
-                                  color: Colors.green.shade400,
-                                  borderRadius: BorderRadius.circular(
-                                    10.r,
-                                  )),
                             ),
                           ),
                         )
@@ -144,10 +141,6 @@ class PositionsController extends GetxController {
     final name = TextEditingController(text: data['name']);
 
     final description = TextEditingController(text: data['description']);
-
-
-
-
 
     return showModalBottomSheet(
         enableDrag: false,
@@ -216,6 +209,14 @@ class PositionsController extends GetxController {
                                                   },
                                                   child: Container(
                                                     height: 55.h,
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Colors.red.shade400,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10.r,
+                                                        )),
                                                     child: const Center(
                                                         child: Text(
                                                       'NO',
@@ -225,14 +226,6 @@ class PositionsController extends GetxController {
                                                           fontWeight:
                                                               FontWeight.w500),
                                                     )),
-                                                    decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.red.shade400,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          10.r,
-                                                        )),
                                                   ),
                                                 ),
                                               ),
@@ -247,6 +240,14 @@ class PositionsController extends GetxController {
                                                   },
                                                   child: Container(
                                                     height: 55.h,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors
+                                                            .green.shade400,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10.r,
+                                                        )),
                                                     child: const Center(
                                                         child: Text('YES',
                                                             style: TextStyle(
@@ -257,14 +258,6 @@ class PositionsController extends GetxController {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600))),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors
-                                                            .green.shade400,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          10.r,
-                                                        )),
                                                   ),
                                                 ),
                                               )
@@ -355,7 +348,6 @@ class PositionsController extends GetxController {
                                           color: Colors.white),
                                       child: TextFormField(
                                         controller: description,
-
                                         keyboardType:
                                             TextInputType.emailAddress,
                                         decoration: InputDecoration(
@@ -369,7 +361,6 @@ class PositionsController extends GetxController {
                                             border: InputBorder.none),
                                       ),
                                     ),
-
                                     SizedBox(
                                       height: 320.h,
                                     ),
@@ -386,11 +377,7 @@ class PositionsController extends GetxController {
                           child: GestureDetector(
                             onTap: () async {
                               if (name.value.text.isEmpty ||
-                                  description.value.text.isEmpty
-
-
-
-                                  ) {
+                                  description.value.text.isEmpty) {
                                 CustomOverlay.showToast(
                                     'Fill all fields to continue saving',
                                     Colors.red,
@@ -400,18 +387,12 @@ class PositionsController extends GetxController {
                                 CustomOverlay.showLoaderOverlay(duration: 1);
 
                                 var positionData = PositionModel(
-                                    position: name.text,
-
-
-
-                                    description: description.text,
-
-
-                                    level: data['id'],
-                                    );
+                                  position: name.text,
+                                  description: description.text,
+                                  level: data['id'],
+                                );
                                 //print(loaCategory.toMap());
-                                Server.updatePosition(
-                                    positionData, data['id']);
+                                Server.updatePosition(positionData, data['id']);
                                 refreshState(true);
                               }
                             },
@@ -445,9 +426,6 @@ class PositionsController extends GetxController {
           );
         });
   }
-
-
-
 
   showCreatePositionSheet(BuildContext context) {
     HapticFeedback.lightImpact();
@@ -518,6 +496,14 @@ class PositionsController extends GetxController {
                                                   },
                                                   child: Container(
                                                     height: 55.h,
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Colors.red.shade400,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10.r,
+                                                        )),
                                                     child: const Center(
                                                         child: Text(
                                                       'NO',
@@ -527,14 +513,6 @@ class PositionsController extends GetxController {
                                                           fontWeight:
                                                               FontWeight.w500),
                                                     )),
-                                                    decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.red.shade400,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          10.r,
-                                                        )),
                                                   ),
                                                 ),
                                               ),
@@ -549,6 +527,14 @@ class PositionsController extends GetxController {
                                                   },
                                                   child: Container(
                                                     height: 55.h,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors
+                                                            .green.shade400,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10.r,
+                                                        )),
                                                     child: const Center(
                                                         child: Text('YES',
                                                             style: TextStyle(
@@ -559,14 +545,6 @@ class PositionsController extends GetxController {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600))),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors
-                                                            .green.shade400,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          10.r,
-                                                        )),
                                                   ),
                                                 ),
                                               )
@@ -714,9 +692,9 @@ class PositionsController extends GetxController {
                           right: 10.w,
                           child: GestureDetector(
                             onTap: () async {
-                              if (_position.value.text.isEmpty || _position.value.text.isEmpty
-                              || selectedLevel == null
-                              ) {
+                              if (_position.value.text.isEmpty ||
+                                  _position.value.text.isEmpty ||
+                                  selectedLevel == null) {
                                 CustomOverlay.showToast(
                                     'Fill all fields to continue saving',
                                     Colors.red,

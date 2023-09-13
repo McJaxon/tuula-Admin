@@ -60,10 +60,11 @@ class _PayoutState extends State<Payout> with TickerProviderStateMixin {
               FutureBuilder(
                   future: Future.wait([
                     Server.fetchFailedPayments(),
-                    //Server.fetchAllLoanCategories(),
-                    // Server.fetchTransactions(),
-                    // Server.fetchSalaryScales(),
-                    // Server.fetchProfessions()
+                    Server.fetchAllLoanCategories(),
+                    Server.fetchTransactions(),
+                    Server.fetchSalaryScales(),
+                    Server.fetchProfessions(),
+                    Server.fetchUsers()
                   ]),
                   builder: (context, AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {

@@ -83,6 +83,14 @@ class ProfessionController extends GetxController {
                                                   },
                                                   child: Container(
                                                     height: 55.h,
+                                                    decoration: BoxDecoration(
+                                                        color:
+                                                            Colors.red.shade400,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10.r,
+                                                        )),
                                                     child: const Center(
                                                         child: Text(
                                                       'NO',
@@ -92,14 +100,6 @@ class ProfessionController extends GetxController {
                                                           fontWeight:
                                                               FontWeight.w500),
                                                     )),
-                                                    decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.red.shade400,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          10.r,
-                                                        )),
                                                   ),
                                                 ),
                                               ),
@@ -114,6 +114,14 @@ class ProfessionController extends GetxController {
                                                   },
                                                   child: Container(
                                                     height: 55.h,
+                                                    decoration: BoxDecoration(
+                                                        color: Colors
+                                                            .green.shade400,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                          10.r,
+                                                        )),
                                                     child: const Center(
                                                         child: Text('YES',
                                                             style: TextStyle(
@@ -124,14 +132,6 @@ class ProfessionController extends GetxController {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600))),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors
-                                                            .green.shade400,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(
-                                                          10.r,
-                                                        )),
                                                   ),
                                                 ),
                                               )
@@ -223,7 +223,8 @@ class ProfessionController extends GetxController {
                                         textCapitalization:
                                             TextCapitalization.sentences,
                                         decoration: InputDecoration(
-                                            hintText: 'write short description here',
+                                            hintText:
+                                                'write short description here',
                                             hintStyle:
                                                 TextStyle(fontSize: 17.sp),
                                             contentPadding:
@@ -256,7 +257,8 @@ class ProfessionController extends GetxController {
                                 var transactionTypeData = TransactionTypeModel(
                                     name: _name.text,
                                     description: _description.text);
-                                Server.createTransactionType(transactionTypeData);
+                                Server.createTransactionType(
+                                    transactionTypeData);
                               }
                             },
                             child: Container(

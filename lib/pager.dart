@@ -1,11 +1,11 @@
-import 'package:admin_banja/controllers/userDetailsController.dart';
+import 'package:admin_banja/controllers/user_details_controller.dart';
 import 'package:admin_banja/screens/auth/register_page.dart';
 import 'package:admin_banja/screens/dash.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-import 'controllers/loanDetailControllers.dart';
+import 'controllers/loan_detail_controllers.dart';
 
 class Pager extends StatefulWidget {
   const Pager({Key? key}) : super(key: key);
